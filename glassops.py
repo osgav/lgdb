@@ -299,16 +299,6 @@ def print_redir():
     print(clrz['BBG'] + clrz['WARNING'] +"[-]"+ clrz['ENDC'], end="")
     sys.stdout.flush()
 
-def print_redir_success():
-    '''print a green thing'''
-    print(clrz['BBG'] + clrz['GREEN'] +"{+}"+ clrz['ENDC'], end="")
-    sys.stdout.flush()
-
-def print_redir_failure():
-    '''print a red thing'''
-    print(clrz['BBG'] + clrz['FAIL'] +"{-}"+ clrz['ENDC'], end="")
-    sys.stdout.flush()    
-
 def print_fail():
     '''print fail'''
     print(clrz['BBG'] + clrz['FAIL'] +"fail"+ clrz['ENDC'], end="")
@@ -339,13 +329,11 @@ def main():
     parser.add_option('-d', '--db', dest='db', type='string', help='specify database')
     parser.add_option('--scrape', action='store_true', dest='scrp', help='scrape html, feed db')
     parser.add_option('--crawl', action='store_true', dest='crwl', help='crawl glasses, update db')
-    parser.add_option('--tmpp', action='store_true', dest='tmpp', help='tmp print')
 
     (options, args) = parser.parse_args()
     existing_database = options.db
     should_i_scrape = options.scrp
     should_i_crawl = options.crwl
-    temp_print = options.tmpp
     active_database = ""
 
     #### start processing command line options <<<<
@@ -366,9 +354,6 @@ def main():
             global LIMITER
             LIMITER = int(args[0])
             clrprint("GREEN", "\n\t[+] [DONE] setting scrape/crawl LIMITER to %s records" % LIMITER)
-            # if len(args) > 1:
-                # print("ignoring additional arguments: %s" % " ".join(args[1:]))
-
         except ValueError:
             clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % args[0])
     else:
