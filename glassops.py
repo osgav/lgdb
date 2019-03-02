@@ -155,7 +155,7 @@ def probe_glass(lgid, glass_url):
     #   protocol_source
     #   http_status
     #   is_redirect
-    #   glass_url_destination --> see probe_glass_redirect()
+    #   glass_url_destination
     #   headers_count
     #   headers_bytes
     #   response_bytes
@@ -242,62 +242,6 @@ def probe_glass(lgid, glass_url):
     return probe_details, last_updated
 
 
-# --crawl Part III (subsubroutine)
-#
-# def probe_glass_redirect(lgid, glass_url):
-    # '''inspect 3xx redirect chains...'''
-
-    # redirect_details = {}
-    # details (columns) to collect data for:
-    #   glass_url_destination
-    #
-
-    # re-request the glass url and follow redirects!
-    # exception_status = None
-    # try:
-    #     response = requests.get(glass_url)
-
-    #     locations = []
-    #     for resp in response.history:
-    #         locations.append(resp.headers['Location'])
-
-    #     # GET PROBE DETAILS
-    #     # set glass_url_destination to the value of last Location header in redirect chain
-    #     redirect_details['glass_url_destination'] = locations[-1]
-
-    #     # different log file: redirects.log
-    #     # may want to slightly change the format / info for a single entry..
-    #     log_redirect_details(lgid, glass_url, locations[-1], response)
-
-    #     # update progress meter
-    #     if response.ok:
-    #         print_redir_success()
-    #     else:
-    #         print_redir_failure()
-
-    # except requests.HTTPError as err:
-    #     print_fail()
-    #     log_exception_details(glass_url, err)
-    #     exception_status = "RED HTTPERROR"
-    # except requests.Timeout as err:
-    #     print_fail()
-    #     log_exception_details(glass_url, err)
-    #     exception_status = "RED TIMEOUT"
-    # except requests.ConnectionError as err:
-    #     print_fail()
-    #     log_exception_details(glass_url, err)
-    #     exception_status = "RED CONNECTIONERROR"
-    # except:
-    #     print_fail()
-    #     log_exception_details(glass_url, "something terrible seems to have happened")
-    #     exception_status = "RED ERROR 666"
-
-    # if exception_status is not None:
-    #     redirect_details['glass_url_destination'] = exception_status
-
-    # return redirect_details
-
-
 # logging - headers, redirects and exceptions
 #
 def log_response_details(lgid, glass_url, response_obj):
@@ -327,34 +271,6 @@ def log_response_details(lgid, glass_url, response_obj):
         logfile.write("=====================================================================\n\n")
         logfile.write("\n\n\n")
 
-
-# def log_redirect_details(lgid, glass_url_src, glass_url_dest, response_obj):
-#     '''write details to log file outside of database'''
-
-#     localtime = time.localtime()
-#     time_string = time.strftime("%Y-%m-%d %H:%M:%S %z", localtime)
-
-#     with open("redirects.log", "a") as logfile:
-#         logfile.write("=====================================================================\n")
-#         logfile.write("%s\n" % time_string)
-#         logfile.write("lgid: %s\n" % lgid)
-#         logfile.write("url source:\t%s\n" % glass_url_src)
-#         logfile.write("url dest:\t%s\n" % glass_url_dest)
-#         # for header, value in response_obj.request.headers.iteritems():
-#             # logfile.write("%s: %s\n" % (header, value))
-#         # logfile.write("\n\n\n")
-#         logfile.write("- - - - - - - - - -\n")
-#         for resp in response_obj.history:
-#             logfile.write("status code: %s\n" % resp.status_code)
-#             for header, value in resp.headers.iteritems():
-#                 logfile.write("%s: %s\n" % (header, value))
-#             logfile.write("- - - - - - - - - -\n")
-#         logfile.write("status: %s\n" % response_obj.status_code)
-#         for header, value in response_obj.headers.iteritems():
-#             logfile.write("%s: %s\n" % (header, value))
-
-#         logfile.write("=====================================================================\n\n")
-#         logfile.write("\n\n\n")
 
 def log_exception_details(glass_url, exception_obj):
     '''write exceptions to log file'''
@@ -397,6 +313,7 @@ def print_fail():
     '''print fail'''
     print(clrz['BBG'] + clrz['FAIL'] +"fail"+ clrz['ENDC'], end="")
     sys.stdout.flush()
+
 def print_dbf():
     '''print database fail'''
     print(clrz['BBG'] + clrz['FAIL'] +"database fail"+ clrz['ENDC'], end="")
