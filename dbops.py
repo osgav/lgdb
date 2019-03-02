@@ -4,14 +4,19 @@
 
 from __future__ import print_function
 from core.disco import clrprint
-from core.db import create_fresh_database, new_column
+from core.db import create_scrape_database, new_column
 
 import optparse
 import time
 
 
+#
+# move to a config file
+#
 LG_DBSCHEMA = 'config/lgdb_schema_ext5.sql' # default schema if none specified via --schema
-
+#
+#
+#
 
 
 
@@ -96,9 +101,9 @@ def main():
         else:
             active_database = database_provided
     else:
-        clrprint("OKBLUE", "\n\t[+] [STARTED] creating fresh database... [%s]" % database_requested)
+        clrprint("OKBLUE", "\n\t[+] [STARTED] creating new scrape database... [%s]" % database_requested)
         active_database = database_requested
-        create_fresh_database(active_database, db_schema)
+        create_scrape_database(active_database, db_schema)
 
     # column to be added?
     #

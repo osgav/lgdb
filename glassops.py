@@ -6,17 +6,21 @@ from __future__ import print_function
 from core.disco import clrprint, clrz
 from core.scrape import scrape_glasses
 from core.crawl import crawl_glasses
-from core.db import db_has_glasses
+from core.db import db_has_glasses, check_scrape_database
 
 import optparse
 import sys
 import time
 
 
-LG_DB = 'database/lgdb.sqlite3'
+#
+# move to a config file
+#
 DEFAULT_LIMIT = 1
-
-
+DB_ROOT = 'database/'
+#
+#
+#
 
 
 USAGE = """
@@ -73,19 +77,19 @@ def main():
 
     # evaluate presence of -d
     #
-    active_database = ""
+    scrape_database = ""
     if database_provided is None:
         clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
         exit(0)
     else:
-        active_database = database_provided
-        db_has_glasses(active_database)
+        scrape_database = "%s%s.sqlite3" % (DB_ROOT, database_provided)
+        check_scrape_database(scrape_database)
 
 
     # evaluate presence of --scrape
     #
     if scrape_requested is not None:
-        scrape_glasses(active_database, limit)
+        scrape_glasses(scrape_database, limit)
     else:
         clrprint("WARNING", "\n\t[+] [SKIPPING] not scraping glasses source.")
 
@@ -93,7 +97,7 @@ def main():
     # evaluate presence of --crawl
     #
     if crawl_requested is not None:
-        crawl_glasses(active_database, limit)
+        crawl_glasses(scrape_database, limit)
     else:
         clrprint("WARNING", "\n\t[+] [SKIPPING] not crawling glasses URLs.")
 

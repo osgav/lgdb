@@ -10,29 +10,25 @@ import re
 import time
 
 
-LG_DB = 'database/lgdb.sqlite3'
-
-
 
 
 # entrypoint
 #
-def crawl_glasses(db_name, limiter):
-    if db_has_glasses(db_name):
+def crawl_glasses(scrape_database, limiter):
+    if db_has_glasses(scrape_database):
         clrprint("OKBLUE", "\n\t[+] [STARTED] crawling looking glasses...\n")
-        run_crawl(db_name, limiter)
+        run_crawl(scrape_database, limiter)
     else:
-        clrprint("FAIL", "\n\t[+] [ERROR] no URLs to crawl in database [%s]" % db_name)
+        clrprint("FAIL", "\n\t[+] [ERROR] no URLs to crawl in database [%s]" % scrape_database)
 
 
 # --crawl Part I
 #
-def run_crawl(db_name, limiter):
+def run_crawl(scrape_database, limiter):
     '''iterate through glass records and update database with (new) crawl data'''
 
     # grab glass records from specified database
-    lg_db = LG_DB.replace("lgdb", "lgdb_%s" % db_name)
-    with sqlite3.connect(lg_db) as conn:
+    with sqlite3.connect(scrape_database) as conn:
         cursor = conn.cursor()
         cursor.execute('select lgid, glass_url_source from glasses')
 
@@ -77,7 +73,7 @@ def run_crawl(db_name, limiter):
                 print("\n\n")
                 print(err)
 
-    clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] updated with crawl data." % db_name)
+    clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] updated with crawl data." % scrape_database)
     return
 
 
