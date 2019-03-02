@@ -27,6 +27,9 @@ def db_has_glasses(db_name):
     '''count rows in glasses table of specified database'''
 
     lg_db = LG_DB.replace("lgdb", "lgdb_%s" % db_name)
+    #
+    # TODO: check db file exists before trying to use it
+    #
     with sqlite3.connect(lg_db) as conn:
 
         cur = conn.cursor()
@@ -286,18 +289,28 @@ def main():
     '''glassops.py entry point'''
     start_time = time.time()
 
-
-    # construct command line options and read them
-    #
     parser = optparse.OptionParser("\n\tglassops.py -d database [--scrape] [--crawl] [LIMITER]")
-    parser.add_option('-d', '--db', dest='db', type='string', help='specify database')
-    parser.add_option('--scrape', action='store_true', dest='scrp', help='scrape html, feed db')
-    parser.add_option('--crawl', action='store_true', dest='crwl', help='crawl glasses, update db')
+
+    parser.add_option('-d',
+                      '--db',
+                      dest='db',
+                      type='string',
+                      help='specify database')
+
+    parser.add_option('--scrape',
+                      action='store_true',
+                      dest='scrp',
+                      help='scrape html, feed db')
+
+    parser.add_option('--crawl',
+                      action='store_true',
+                      dest='crwl',
+                      help='crawl glasses, update db')
 
     (options, args) = parser.parse_args()
-    existing_database = options.db
-    should_i_scrape = options.scrp
-    should_i_crawl = options.crwl
+    database_provided = options.db
+    scrape_requested = options.scrp
+    crawl_requested = options.crwl
     active_database = ""
 
 
@@ -306,16 +319,16 @@ def main():
 
     # can't proceed without options or a database!
     #
-    if existing_database is None and \
-       should_i_scrape is None and \
-       should_i_crawl is None:
+    if database_provided is None and \
+       scrape_requested is None and \
+       crawl_requested is None:
         clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
         exit(0)
-    elif existing_database is None:
+    elif database_provided is None:
         clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
         exit(0)
     else:
-        active_database = existing_database
+        active_database = database_provided
 
 
     # process any additional arguments - LIMITER
@@ -333,7 +346,7 @@ def main():
 
     # evaluate presence of --scrape
     #
-    if should_i_scrape is None:
+    if scrape_requested is None:
         clrprint("WARNING", "\n\t[+] [SKIPPING] not scraping bgpdb.html source.")
         clrprint("WARNING", "\t[+] [SKIPPING] not feeding database.\n")
     elif db_has_glasses(active_database):
@@ -361,7 +374,7 @@ def main():
 
     # evaluate presence of --crawl
     #
-    if should_i_crawl is None:
+    if crawl_requested is None:
         clrprint("WARNING", "\n\t[+] [SKIPPING] not crawling looking glass URLs.")
         clrprint("WARNING", "\t[+] [SKIPPING] not updating database [%s] with crawl data.\n" % active_database)
     elif db_has_glasses(active_database):
