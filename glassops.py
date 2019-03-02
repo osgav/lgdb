@@ -9,8 +9,7 @@
 #
 
 from __future__ import print_function
-from disco import clrprint
-from disco import clrz
+from disco import clrprint, clrz, print_success, print_error, print_redir, print_fail, print_dbf, print_purple
 
 import sqlite3
 import optparse
@@ -282,38 +281,6 @@ def log_exception_details(glass_url, exception_obj):
         logfile.write("\n\n\n")
 
 
-# progress meter functions
-#
-def print_success():
-    '''print a green thing'''
-    print(clrz['BBG'] + clrz['GREEN'] +"[+]"+ clrz['ENDC'], end="")
-    sys.stdout.flush()
-
-def print_error():
-    '''print a red thing'''
-    print(clrz['BBG'] + clrz['FAIL'] +"[-]"+ clrz['ENDC'], end="")
-    sys.stdout.flush()
-
-def print_redir():
-    '''print a yellow thing'''
-    print(clrz['BBG'] + clrz['WARNING'] +"[-]"+ clrz['ENDC'], end="")
-    sys.stdout.flush()
-
-def print_fail():
-    '''print fail'''
-    print(clrz['BBG'] + clrz['FAIL'] +"fail"+ clrz['ENDC'], end="")
-    sys.stdout.flush()
-
-def print_dbf():
-    '''print database fail'''
-    print(clrz['BBG'] + clrz['FAIL'] +"database fail"+ clrz['ENDC'], end="")
-    sys.stdout.flush()
-
-def print_purple():
-    '''print a purple thing'''
-    print(clrz['HEADER'] +"*"+ clrz['ENDC'], end="")
-    sys.stdout.flush()
-    time.sleep(0.01)
 
 
 # START
