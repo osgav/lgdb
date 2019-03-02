@@ -98,8 +98,14 @@ def main():
 
         if user_answer == "yes":
             clrprint("OKBLUE", "\n\t[+] [STARTING] scraping more records into database [%s]\n" % active_database)
-            scrape_data = scrape_bgpdb(limiter=limit) if limiter else scrape_data = scrape_bgpdb()
+            
+            if limiter:
+                scrape_data = scrape_bgpdb(limiter=limit)
+            else:
+                scrape_data = scrape_bgpdb()
+
             feed_database(active_database, scrape_data)
+        
         elif user_answer == "no":
             clrprint("WARNING", "\n\t[+] [SKIPPING] not adding anything to database.\n")
         else:
@@ -107,8 +113,14 @@ def main():
     else:
         # --scrape supplied and active_database is empty, proceed with feed_database()
         clrprint("OKBLUE", "\n\t[+] [STARTED] scraping HTML & feeding database...")
-        scrape_data = scrape_bgpdb(limiter=limit) if limiter else scrape_data = scrape_bgpdb()
+
+        if limiter:
+            scrape_data = scrape_bgpdb(limiter=limit)
+        else:
+            scrape_data = scrape_bgpdb()
+
         feed_database(active_database, scrape_data)
+
         clrprint("OKBLUE", "\t    [%s records inserted]\n" % len(scrape_data))
 
 
