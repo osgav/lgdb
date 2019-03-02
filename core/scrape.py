@@ -3,7 +3,7 @@
 #
 
 from disco import clrprint, clrz, print_purple
-from db import db_has_glasses
+from db import scrape_db_has_glasses
 import sqlite3
 from bs4 import BeautifulSoup
 
@@ -19,7 +19,7 @@ def scrape_glasses(scrape_database, limiter):
     load scraped URLs into database
     '''
 
-    if db_has_glasses(scrape_database):
+    if scrape_db_has_glasses(scrape_database):
         clrprint("WARNING", "\n\t[+] [WARNING] this database already has records in 'glasses' table.")
         clrprint("WARNING", "\t[+] [WARNING] are you sure you want to --scrape more data into it?")
         clrprint("FAIL", "\n\t[+] type [yes] to scrape, or [no] to proceed without scraping:\n\n")
@@ -44,8 +44,6 @@ def scrape_glasses(scrape_database, limiter):
         clrprint("OKBLUE", "\t    [%s records inserted]\n" % len(scrape_data))
 
 
-# --scrape Part I
-#
 def scrape_bgpdb(limiter):
     '''
     scrape original datasource bgpdb.html
@@ -67,8 +65,6 @@ def scrape_bgpdb(limiter):
     return table_data[:limiter]
 
 
-# --scrape Part II
-#
 def feed_database(scrape_database, scrape_data):
     '''
     insert scrape data into sqlite3 database

@@ -3,7 +3,7 @@
 #
 
 from disco import clrprint, print_success, print_error, print_redir, print_fail, print_dbf
-from db import db_has_glasses
+from db import scrape_db_has_glasses
 import sqlite3
 import requests
 import re
@@ -15,7 +15,7 @@ import time
 # entrypoint
 #
 def crawl_glasses(scrape_database, limiter):
-    if db_has_glasses(scrape_database):
+    if scrape_db_has_glasses(scrape_database):
         clrprint("OKBLUE", "\n\t[+] [STARTED] crawling looking glasses...\n")
         run_crawl(scrape_database, limiter)
     else:

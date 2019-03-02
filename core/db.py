@@ -62,10 +62,10 @@ def check_scrape_database(scrape_database):
             clrprint("OKBLUE", "\t[+] [INFO] database [%s] table 'glasses' has [%d] rows" % (scrape_database, len(rows)))
 
 
-def db_has_glasses(scrape_database):
+def scrape_db_has_glasses(scrape_database):
     '''
-    pre-crawl database check
-    are there glass URLs to crawl?
+    pre-scrape database check: has an empty database been provided?
+    pre-crawl database check: are there glass URLs to crawl?
     return False when database doesnt exist
     return False when database exists but has no glass URLs
     return True when database exists and has at least 1 glass URL
