@@ -300,22 +300,20 @@ def main():
     should_i_crawl = options.crwl
     active_database = ""
 
+
     #### start processing command line options <<<<
 
-    # can't proceed with no options!
+
+    # can't proceed without options or a database!
     #
     if existing_database is None and \
        should_i_scrape is None and \
        should_i_crawl is None:
         clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
         exit(0)
-
-
-    # set 'active_database'
-    #
-    if existing_database is None:
+    elif existing_database is None:
         clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
-        exit(0) # mandatory: if not set can't proceed
+        exit(0)
     else:
         active_database = existing_database
 
@@ -338,7 +336,6 @@ def main():
     if should_i_scrape is None:
         clrprint("WARNING", "\n\t[+] [SKIPPING] not scraping bgpdb.html source.")
         clrprint("WARNING", "\t[+] [SKIPPING] not feeding database.\n")
-
     elif db_has_glasses(active_database):
         clrprint("WARNING", "\n\t[+] [WARNING] this database already has records in 'glasses' table.")
         clrprint("WARNING", "\t[+] [WARNING] are you sure you want to --scrape more data into it?")
@@ -350,16 +347,12 @@ def main():
             clrprint("OKBLUE", "\n\t[+] [STARTING] scraping %d records into database [%s]\n" % (LIMITER, active_database))
             scrape_data = scrape_bgpdb()
             feed_database(active_database, scrape_data)
-
         elif user_answer == "no":
             clrprint("WARNING", "\n\t[+] [SKIPPING] not adding anything to database.\n")
-
         else:
             clrprint("FAIL", "\n\t please type [yes] or [no]")
-
     else:
-        # --scrape supplied and active_database is empty
-        # proceed with feed_database()
+        # --scrape supplied and active_database is empty, proceed with feed_database()
         clrprint("OKBLUE", "\n\t[+] [STARTED] scraping HTML & feeding database...")
         scrape_data = scrape_bgpdb()
         feed_database(active_database, scrape_data)
@@ -371,15 +364,15 @@ def main():
     if should_i_crawl is None:
         clrprint("WARNING", "\n\t[+] [SKIPPING] not crawling looking glass URLs.")
         clrprint("WARNING", "\t[+] [SKIPPING] not updating database [%s] with crawl data.\n" % active_database)
-
     elif db_has_glasses(active_database):
         clrprint("OKBLUE", "\n\t[+] [STARTED] crawling looking glasses...\n")
         crawl_glasses(active_database)
-
     else:
         clrprint("FAIL", "\n\t[+] [ERROR] no data in database [%s]" % active_database)
 
+
     #### stop processing command line options <<<<
+
 
     # glassops.py exit point
     end_time = time.time()
