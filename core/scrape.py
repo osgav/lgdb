@@ -2,7 +2,6 @@
 # osgav
 #
 
-
 from disco import clrprint, print_purple
 import sqlite3
 from bs4 import BeautifulSoup

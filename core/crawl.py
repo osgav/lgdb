@@ -2,7 +2,6 @@
 # osgav
 #
 
-
 from disco import clrprint, print_success, print_error, print_redir, print_fail, print_dbf
 import sqlite3
 import requests
@@ -10,10 +9,10 @@ import re
 import time
 
 
-
-
 LG_DB = 'database/lgdb.sqlite3'
 DEFAULT_CRAWL_LIMIT = 10
+
+
 
 
 # --crawl Part I
@@ -70,8 +69,6 @@ def crawl_glasses(db_name, limiter=DEFAULT_CRAWL_LIMIT):
 
     clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] updated with crawl data." % db_name)
     return
-
-
 
 
 # --crawl Part II (subroutine)
@@ -169,8 +166,6 @@ def probe_glass(lgid, glass_url):
         probe_details['response_bytes'] = exception_status
 
     return probe_details, last_updated
-
-
 
 
 # logging - headers, redirects and exceptions

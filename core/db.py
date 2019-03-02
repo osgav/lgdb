@@ -2,7 +2,6 @@
 # osgav
 #
 
-
 from disco import clrprint
 import sqlite3
 import os

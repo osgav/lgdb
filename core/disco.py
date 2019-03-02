@@ -1,29 +1,11 @@
 #!/usr/bin/env python
-'''colourprint function'''
-
 # osgav
-# 03 March 2018
+#
 
 from __future__ import print_function
 import sys
 import time
 
-# class clr:
-#     '''colourzzz'''
-#     HEADER = '\033[95m'
-#     OKBLUE = '\033[94m'
-#     OKGREEN = '\033[92m'
-#     GREEN = '\033[32m'
-#     BBG = '\033[40m'
-#     WARNING = '\033[93m'
-#     FAIL = '\033[91m'
-#     ENDC = '\033[0m'
-#     BOLD = '\033[1m'
-#     UNDERLINE = '\033[4m'
-
-# def clrprint(colour, message):
-#     '''print colourful words'''
-#     print(eval("clr." + colour) + clr.BOLD + message + clr.ENDC)
 
 
 
@@ -76,5 +58,3 @@ def print_purple():
     print(clrz['HEADER'] +"*"+ clrz['ENDC'], end="")
     sys.stdout.flush()
     time.sleep(0.01)
-
-
