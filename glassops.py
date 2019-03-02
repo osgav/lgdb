@@ -18,13 +18,23 @@ LG_DB = 'database/lgdb.sqlite3'
 
 
 
+USAGE = """
+
+glassops.py -d database [--scrape] [--crawl] [LIMITER]
+
+you need to provide at least one of 'scrape' or 'crawl'
+
+you need to provide LIMITER, an integer, to scrape or
+crawl multiple URLs. the default is 1.
+"""
+
 # START
 #
 def main():
     '''glassops.py entry point'''
     start_time = time.time()
 
-    parser = optparse.OptionParser("\n\tglassops.py -d database [--scrape] [--crawl] [LIMITER]")
+    parser = optparse.OptionParser(USAGE)
 
     parser.add_option('-d',
                       '--db',
