@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 
 LG_DB = 'database/lgdb.sqlite3'
-DEFAULT_SCRAPE_LIMIT = 10
+DEFAULT_SCRAPE_LIMIT = 1
 
 
 

@@ -14,7 +14,6 @@ import time
 
 
 LG_DB = 'database/lgdb.sqlite3'
-LIMITER = 10 # default scrape / crawl limit
 
 
 
@@ -48,6 +47,7 @@ def main():
     scrape_requested = options.scrape
     crawl_requested = options.crawl
     active_database = ""
+    limiter = args[0] if args else False
 
 
     #### start processing command line options <<<<
@@ -69,15 +69,22 @@ def main():
 
     # process any additional arguments - LIMITER
     #
-    if not args:
-        clrprint("OKBLUE", "\n\t[+] [INFO] using default scrape/crawl LIMITER of %d" % LIMITER)
-    else:
+    if limiter:
         try:
-            global LIMITER
-            LIMITER = int(args[0])
-            clrprint("GREEN", "\n\t[+] [DONE] setting scrape/crawl LIMITER to %s records" % LIMITER)
+            limit = int(limiter)
         except ValueError:
-            clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % args[0])
+            clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % limiter)
+            exit(0)
+
+    # if not args:
+    #     clrprint("OKBLUE", "\n\t[+] [INFO] using default scrape/crawl LIMITER of %d" % LIMITER)
+    # else:
+    #     try:
+    #         global LIMITER
+    #         LIMITER = int(args[0])
+    #         clrprint("GREEN", "\n\t[+] [DONE] setting scrape/crawl LIMITER to %s records" % LIMITER)
+    #     except ValueError:
+    #         clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % args[0])
 
 
     # evaluate presence of --scrape
@@ -93,9 +100,15 @@ def main():
         user_answer = raw_input(clrz['FAIL'] + clrz['BOLD'] + "\t[+] " + clrz['ENDC'])
 
         if user_answer == "yes":
-            clrprint("OKBLUE", "\n\t[+] [STARTING] scraping %d records into database [%s]\n" % (LIMITER, active_database))
-            scrape_data = scrape_bgpdb(limiter=LIMITER)
+            clrprint("OKBLUE", "\n\t[+] [STARTING] scraping more records into database [%s]\n" % active_database)
+            
+            if limiter:
+                scrape_data = scrape_bgpdb(limiter=limit)
+            else:
+                scrape_data = scrape_bgpdb()
+
             feed_database(active_database, scrape_data)
+        
         elif user_answer == "no":
             clrprint("WARNING", "\n\t[+] [SKIPPING] not adding anything to database.\n")
         else:
@@ -103,8 +116,14 @@ def main():
     else:
         # --scrape supplied and active_database is empty, proceed with feed_database()
         clrprint("OKBLUE", "\n\t[+] [STARTED] scraping HTML & feeding database...")
-        scrape_data = scrape_bgpdb(limiter=LIMITER)
+
+        if limiter:
+            scrape_data = scrape_bgpdb(limiter=limit)
+        else:
+            scrape_data = scrape_bgpdb()
+
         feed_database(active_database, scrape_data)
+
         clrprint("OKBLUE", "\t    %s records inserted.\n" % len(scrape_data))
 
 
@@ -115,7 +134,12 @@ def main():
         clrprint("WARNING", "\t[+] [SKIPPING] not updating database [%s] with crawl data.\n" % active_database)
     elif db_has_glasses(active_database):
         clrprint("OKBLUE", "\n\t[+] [STARTED] crawling looking glasses...\n")
-        crawl_glasses(active_database, limiter=LIMITER)
+
+        if limiter:
+            crawl_glasses(active_database, limiter=limit)
+        else:
+            crawl_glasses(active_database)
+
     else:
         clrprint("FAIL", "\n\t[+] [ERROR] no data in database [%s]" % active_database)
 

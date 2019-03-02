@@ -10,7 +10,7 @@ import time
 
 
 LG_DB = 'database/lgdb.sqlite3'
-DEFAULT_CRAWL_LIMIT = 10
+DEFAULT_CRAWL_LIMIT = 1
 
 
 
