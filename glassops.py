@@ -4,9 +4,6 @@
 # osgav
 # 26 July 2017
 #
-# 03 March 2018 --> add 'disco' imports / associated 'print' changes
-#
-#
 
 from __future__ import print_function
 from disco import clrprint, clrz, print_success, print_error, print_redir, print_fail, print_dbf, print_purple
