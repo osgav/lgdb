@@ -58,17 +58,6 @@ def main():
     scrape_requested = options.scrape
     crawl_requested = options.crawl
     limiter = args[0] if args else False
-    active_database = ""    
-
-
-    # can't proceed without a database!
-    #
-    if database_provided is None:
-        clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
-        exit(0)
-    else:
-        active_database = database_provided
-        db_has_glasses(active_database)
 
 
     # process any additional arguments - LIMITER
@@ -80,6 +69,17 @@ def main():
         except ValueError:
             clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % limiter)
             exit(0)
+
+
+    # evaluate presence of -d
+    #
+    active_database = ""
+    if database_provided is None:
+        clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
+        exit(0)
+    else:
+        active_database = database_provided
+        db_has_glasses(active_database)
 
 
     # evaluate presence of --scrape
