@@ -311,19 +311,6 @@ def main():
         exit(0)
 
 
-    # process any additional arguments - LIMITER
-    #
-    if args:
-        try:
-            global LIMITER
-            LIMITER = int(args[0])
-            clrprint("GREEN", "\n\t[+] [DONE] setting scrape/crawl LIMITER to %s records" % LIMITER)
-        except ValueError:
-            clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % args[0])
-    else:
-        clrprint("OKBLUE", "\n\t[+] [INFO] using default scrape/crawl LIMITER of %d" % LIMITER)
-
-
     # set 'active_database'
     #
     if existing_database is None:
@@ -331,6 +318,19 @@ def main():
         exit(0) # mandatory: if not set can't proceed
     else:
         active_database = existing_database
+
+
+    # process any additional arguments - LIMITER
+    #
+    if not args:
+        clrprint("OKBLUE", "\n\t[+] [INFO] using default scrape/crawl LIMITER of %d" % LIMITER)
+    else:
+        try:
+            global LIMITER
+            LIMITER = int(args[0])
+            clrprint("GREEN", "\n\t[+] [DONE] setting scrape/crawl LIMITER to %s records" % LIMITER)
+        except ValueError:
+            clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % args[0])
 
 
     # evaluate presence of --scrape
