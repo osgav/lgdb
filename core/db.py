@@ -62,7 +62,7 @@ def db_has_glasses(db_name):
         cur.execute("SELECT * FROM glasses")
         rows = cur.fetchall()
 
-        clrprint("OKBLUE", "\t[+] [INFO] number of rows in database [%s]: %d" % (db_name, len(rows)))
+        clrprint("OKBLUE", "\n\t[+] [INFO] number of rows in database [%s]: %d" % (db_name, len(rows)))
 
         glasscount = len(rows)
         return bool(glasscount)

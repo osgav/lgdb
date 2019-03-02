@@ -111,7 +111,7 @@ def main():
 
         feed_database(active_database, scrape_data)
 
-        clrprint("OKBLUE", "\t    %s records inserted.\n" % len(scrape_data))
+        clrprint("OKBLUE", "\t    [%s records inserted]\n" % len(scrape_data))
 
 
     # evaluate presence of --crawl
@@ -128,7 +128,7 @@ def main():
             crawl_glasses(active_database)
 
     else:
-        clrprint("FAIL", "\n\t[+] [ERROR] no data in database [%s]" % active_database)
+        clrprint("FAIL", "\n\t[+] [ERROR] no URLs to crawl in database [%s]" % active_database)
 
 
     # glassops.py exit point
