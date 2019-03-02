@@ -7,13 +7,9 @@ from core.disco import clrprint, clrz, print_success, print_error, print_redir, 
 from core.scrape import db_has_glasses, scrape_bgpdb, feed_database
 from core.crawl import crawl_glasses
 
-import sqlite3
 import optparse
-import re
 import sys
 import time
-import requests
-from bs4 import BeautifulSoup
 
 
 LG_DB = 'database/lgdb.sqlite3'

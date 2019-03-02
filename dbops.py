@@ -5,7 +5,7 @@
 # 28 July 2017
 
 from __future__ import print_function
-from disco import clrprint
+from core.disco import clrprint
 
 import os
 import sqlite3
@@ -57,26 +57,54 @@ def new_column(db_name, column_name, data_type):
     clrprint("GREEN", "\t[+] [DONE] added column [%s] to database [%s]" % (column_name, db_name))
 
 
+USAGE = """
 
+dbops.py -n newdatabase [-s schema]
+OR
+dbops.py -d existingdatabase -c col -t type
+"""
 
 # START
 #
 def main():
     '''dbops.py entry point'''
-
     start_time = time.time()
 
-    # construct command line options and read them
-    parser = optparse.OptionParser("\n\tdbops.py -n newdb [-s schema] OR -d db -c col -t type")
-    parser.add_option('-n', '--newdb', dest='newdb', type='string', help='create new db')
-    parser.add_option('-s', '--schema', dest='sf', type='string', help='specify schema file')
-    parser.add_option('-d', '--db', dest='db', type='string', help='specify existing db')
-    parser.add_option('-c', '--col', dest='col', type='string', help='specify new column name')
-    parser.add_option('-t', '--type', dest='dt', type='string', help='specify new column data type')
+    parser = optparse.OptionParser(USAGE)
+
+    parser.add_option('-n',
+                      '--new-db',
+                      dest='newdb',
+                      type='string',
+                      help='create new db')
+
+    parser.add_option('-s',
+                      '--schema',
+                      dest='sf',
+                      type='string',
+                      help='specify schema file')
+
+    parser.add_option('-d',
+                      '--db',
+                      dest='db',
+                      type='string',
+                      help='specify existing db')
+
+    parser.add_option('-c',
+                      '--col',
+                      dest='col',
+                      type='string',
+                      help='specify new column name')
+
+    parser.add_option('-t',
+                      '--type',
+                      dest='dt',
+                      type='string',
+                      help='specify new column data type')
 
     (options, args) = parser.parse_args()
-    new_database = options.newdb
-    existing_database = options.db
+    database_requested = options.newdb
+    database_provided = options.db
     schema_file = options.sf
     col_name = options.col
     col_type = options.dt
@@ -85,9 +113,9 @@ def main():
     #### start processing command line options <<<<
 
     # can't proceed with no options!
-    if new_database is None and \
+    if database_requested is None and \
        schema_file is None and \
-       existing_database is None and \
+       database_provided is None and \
        col_name is None and \
        col_type is None:
         clrprint("FAIL", "\n\t $ python dbops.py --help\n\n")
@@ -102,16 +130,16 @@ def main():
         db_schema = LG_DBSCHEMA
 
     # set 'active_database'
-    if new_database is None:
+    if database_requested is None:
         clrprint("WARNING", "\n\t[+] [SKIPPING] not creating new database.")
-        if existing_database is None:
+        if database_provided is None:
             clrprint("FAIL", "\t[+] [ERROR] must specify either new or existing database name.\n")
             exit(0)
         else:
-            active_database = existing_database
+            active_database = database_provided
     else:
-        clrprint("OKBLUE", "\n\t[+] [STARTED] creating fresh database... [%s]" % new_database)
-        active_database = new_database
+        clrprint("OKBLUE", "\n\t[+] [STARTED] creating fresh database... [%s]" % database_requested)
+        active_database = database_requested
         create_fresh_database(active_database, db_schema)
 
     # column to be added?
