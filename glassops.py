@@ -7,7 +7,7 @@
 
 from __future__ import print_function
 from core.disco import clrprint, clrz, print_success, print_error, print_redir, print_fail, print_dbf, print_purple
-from core.scrape import db_has_glasses
+from core.scrape import db_has_glasses, scrape_bgpdb, feed_database
 
 import sqlite3
 import optparse
@@ -45,48 +45,48 @@ LIMITER = 10 # default scrape / crawl limit
 
 # --scrape Part I
 #
-def scrape_bgpdb():
-    '''scrape original datasource bgpdb.html'''
+# def scrape_bgpdb():
+#     '''scrape original datasource bgpdb.html'''
 
-    soup = BeautifulSoup(open("source/bgpdb.html"), "lxml")
-    souptable = soup.find("table")
-    table_body = souptable.find("tbody")
+#     soup = BeautifulSoup(open("source/bgpdb.html"), "lxml")
+#     souptable = soup.find("table")
+#     table_body = souptable.find("tbody")
 
-    table_rows = table_body.find_all("tr")
-    table_data = []
-    for row in table_rows:
+#     table_rows = table_body.find_all("tr")
+#     table_data = []
+#     for row in table_rows:
 
-        row_cells = row.find_all("td")
-        row_data = []
-        for row_cell in row_cells:
-            cell_data = row_cell.text
-            row_data.append(cell_data)
-        if len(row_data) > 1:
-            table_data.append(row_data)
-        # add row_data to table_data omitting header rows
+#         row_cells = row.find_all("td")
+#         row_data = []
+#         for row_cell in row_cells:
+#             cell_data = row_cell.text
+#             row_data.append(cell_data)
+#         if len(row_data) > 1:
+#             table_data.append(row_data)
+#         # add row_data to table_data omitting header rows
 
-    clrprint("GREEN", "\t[+] [DONE] bgpdb.html scraped.\n")
-    return table_data[:LIMITER]
+#     clrprint("GREEN", "\t[+] [DONE] bgpdb.html scraped.\n")
+#     return table_data[:LIMITER]
 
 
 # --scrape Part II
 #
-def feed_database(db_name, scrape_data):
-    '''insert scrape data into sqlite3 database'''
+# def feed_database(db_name, scrape_data):
+#     '''insert scrape data into sqlite3 database'''
 
-    lg_db = LG_DB.replace("lgdb", "lgdb_%s" % db_name)
-    with sqlite3.connect(lg_db) as conn:
+#     lg_db = LG_DB.replace("lgdb", "lgdb_%s" % db_name)
+#     with sqlite3.connect(lg_db) as conn:
 
-        # FEEEED
-        for row in scrape_data:
-            conn.execute("""
-            insert into glasses (name, asn, glass_url_source)
-            values ('%s', '%s', '%s')
-            """ % (row[0], row[1], row[2]))
-            print_purple()
+#         # FEEEED
+#         for row in scrape_data:
+#             conn.execute("""
+#             insert into glasses (name, asn, glass_url_source)
+#             values ('%s', '%s', '%s')
+#             """ % (row[0], row[1], row[2]))
+#             print_purple()
 
-    clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] has been fed." % db_name)
-    return
+#     clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] has been fed." % db_name)
+#     return
 
 
 # --crawl Part I
@@ -359,7 +359,7 @@ def main():
 
         if user_answer == "yes":
             clrprint("OKBLUE", "\n\t[+] [STARTING] scraping %d records into database [%s]\n" % (LIMITER, active_database))
-            scrape_data = scrape_bgpdb()
+            scrape_data = scrape_bgpdb(limiter=LIMITER)
             feed_database(active_database, scrape_data)
         elif user_answer == "no":
             clrprint("WARNING", "\n\t[+] [SKIPPING] not adding anything to database.\n")
@@ -368,7 +368,7 @@ def main():
     else:
         # --scrape supplied and active_database is empty, proceed with feed_database()
         clrprint("OKBLUE", "\n\t[+] [STARTED] scraping HTML & feeding database...")
-        scrape_data = scrape_bgpdb()
+        scrape_data = scrape_bgpdb(limiter=LIMITER)
         feed_database(active_database, scrape_data)
         clrprint("OKBLUE", "\t    %s records inserted.\n" % len(scrape_data))
 
