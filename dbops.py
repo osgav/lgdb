@@ -69,9 +69,6 @@ def main():
     active_database = ""
 
 
-    #### start processing command line options <<<<
-
-
     # can't proceed with no options!
     #
     if database_requested is None and \
@@ -112,10 +109,8 @@ def main():
         clrprint("WARNING", "\n\t[+] [SKIPPING] no columns to be added.")
 
 
-    #### stop processing command line options <<<<
-
-
     # dbops.py exit point
+    #
     end_time = time.time()
     elapsed_time = end_time - start_time
     clrprint("GREEN", "\n\t[+] [COMPLETED] dbops run finished in %0.1f seconds.\n\n" % elapsed_time)

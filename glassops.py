@@ -50,9 +50,6 @@ def main():
     limiter = args[0] if args else False
 
 
-    #### start processing command line options <<<<
-
-
     # can't proceed without options or a database!
     #
     if database_provided is None and \
@@ -75,16 +72,6 @@ def main():
         except ValueError:
             clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % limiter)
             exit(0)
-
-    # if not args:
-    #     clrprint("OKBLUE", "\n\t[+] [INFO] using default scrape/crawl LIMITER of %d" % LIMITER)
-    # else:
-    #     try:
-    #         global LIMITER
-    #         LIMITER = int(args[0])
-    #         clrprint("GREEN", "\n\t[+] [DONE] setting scrape/crawl LIMITER to %s records" % LIMITER)
-    #     except ValueError:
-    #         clrprint("FAIL", "\n\t[+] [ERROR] can't limit to '%s' records. try an integer." % args[0])
 
 
     # evaluate presence of --scrape
@@ -144,10 +131,8 @@ def main():
         clrprint("FAIL", "\n\t[+] [ERROR] no data in database [%s]" % active_database)
 
 
-    #### stop processing command line options <<<<
-
-
     # glassops.py exit point
+    #
     end_time = time.time()
     elapsed_time = end_time - start_time
     clrprint("GREEN", "\n\t[+] [COMPLETED] glassops run finished in %0.1f seconds.\n\n" % elapsed_time)
