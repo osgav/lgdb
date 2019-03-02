@@ -4,8 +4,7 @@
 
 from __future__ import print_function
 from core.disco import clrprint, clrz
-from core.db import db_has_glasses
-from core.scrape import scrape_bgpdb, feed_database
+from core.scrape import scrape_glasses
 from core.crawl import crawl_glasses
 
 import optparse
@@ -14,13 +13,14 @@ import time
 
 
 LG_DB = 'database/lgdb.sqlite3'
+DEFAULT_LIMIT = 1
 
 
 
 
 USAGE = """
 
-glassops.py -d database [--scrape] [--crawl] [LIMITER]
+$ glassops.py -d database [--scrape] [--crawl] [LIMITER]
 
 you need to provide at least one of 'scrape' or 'crawl'
 
@@ -76,6 +76,7 @@ def main():
 
     # process any additional arguments - LIMITER
     #
+    limit = DEFAULT_LIMIT
     if limiter:
         try:
             limit = int(limiter)
@@ -86,54 +87,18 @@ def main():
 
     # evaluate presence of --scrape
     #
-    if scrape_requested is None:
-        clrprint("WARNING", "\n\t[+] [SKIPPING] not scraping bgpdb.html source.")
-        clrprint("WARNING", "\t[+] [SKIPPING] not feeding database.\n")
-    elif db_has_glasses(active_database):
-        clrprint("WARNING", "\n\t[+] [WARNING] this database already has records in 'glasses' table.")
-        clrprint("WARNING", "\t[+] [WARNING] are you sure you want to --scrape more data into it?")
-        clrprint("FAIL", "\n\t[+] type [yes] to scrape, or [no] to proceed without scraping:\n\n")
-
-        user_answer = raw_input(clrz['FAIL'] + clrz['BOLD'] + "\t[+] " + clrz['ENDC'])
-
-        if user_answer == "yes":
-            clrprint("OKBLUE", "\n\t[+] [STARTING] scraping more records into database [%s]\n" % active_database)
-            
-            if limiter:
-                scrape_data = scrape_bgpdb(limiter=limit)
-            else:
-                scrape_data = scrape_bgpdb()
-
-            feed_database(active_database, scrape_data)
-        
-        elif user_answer == "no":
-            clrprint("WARNING", "\n\t[+] [SKIPPING] not adding anything to database.\n")
-        else:
-            clrprint("FAIL", "\n\t please type [yes] or [no]")
+    if scrape_requested is not None:
+        scrape_glasses(active_database, limit)
     else:
-        # --scrape supplied and active_database is empty, proceed with feed_database()
-        clrprint("OKBLUE", "\n\t[+] [STARTED] scraping HTML & feeding database...")
-
-        if limiter:
-            scrape_data = scrape_bgpdb(limiter=limit)
-        else:
-            scrape_data = scrape_bgpdb()
-
-        feed_database(active_database, scrape_data)
-
-        clrprint("OKBLUE", "\t    [%s records inserted]\n" % len(scrape_data))
+        clrprint("WARNING", "\n\t[+] [SKIPPING] not scraping glasses source.")
 
 
     # evaluate presence of --crawl
     #
-    if crawl_requested is None:
-        clrprint("WARNING", "\n\t[+] [SKIPPING] not crawling looking glass URLs.")
-        clrprint("WARNING", "\t[+] [SKIPPING] not updating database [%s] with crawl data.\n" % active_database)
-    elif db_has_glasses(active_database):
-        clrprint("OKBLUE", "\n\t[+] [STARTED] crawling looking glasses...\n")
-        crawl_glasses(active_database, limiter=limit) if limiter else crawl_glasses(active_database)
+    if crawl_requested is not None:
+        crawl_glasses(active_database, limit)
     else:
-        clrprint("FAIL", "\n\t[+] [ERROR] no URLs to crawl in database [%s]" % active_database)
+        clrprint("WARNING", "\n\t[+] [SKIPPING] not crawling glasses URLs.")
 
 
     # glassops.py exit point

@@ -3,6 +3,7 @@
 #
 
 from disco import clrprint, print_success, print_error, print_redir, print_fail, print_dbf
+from db import db_has_glasses
 import sqlite3
 import requests
 import re
@@ -10,14 +11,23 @@ import time
 
 
 LG_DB = 'database/lgdb.sqlite3'
-DEFAULT_CRAWL_LIMIT = 1
 
 
+
+
+# entrypoint
+#
+def crawl_glasses(db_name, limiter):
+    if db_has_glasses(db_name):
+        clrprint("OKBLUE", "\n\t[+] [STARTED] crawling looking glasses...\n")
+        run_crawl(db_name, limiter)
+    else:
+        clrprint("FAIL", "\n\t[+] [ERROR] no URLs to crawl in database [%s]" % db_name)
 
 
 # --crawl Part I
 #
-def crawl_glasses(db_name, limiter=DEFAULT_CRAWL_LIMIT):
+def run_crawl(db_name, limiter):
     '''iterate through glass records and update database with (new) crawl data'''
 
     # grab glass records from specified database

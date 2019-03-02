@@ -17,9 +17,11 @@ LG_DBSCHEMA = 'config/lgdb_schema_ext5.sql' # default schema if none specified v
 
 USAGE = """
 
-dbops.py -n newdatabase [-s schema]
+$ dbops.py -n newdatabase [-s schemafile]
+
 OR
-dbops.py -d existingdatabase -c col -t type
+
+$ dbops.py -d existingdatabase -c col -t type
 """
 
 # START
