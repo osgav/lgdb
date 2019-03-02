@@ -6,6 +6,7 @@ from __future__ import print_function
 from core.disco import clrprint, clrz
 from core.scrape import scrape_glasses
 from core.crawl import crawl_glasses
+from core.db import db_has_glasses
 
 import optparse
 import sys
@@ -56,22 +57,18 @@ def main():
     database_provided = options.db
     scrape_requested = options.scrape
     crawl_requested = options.crawl
-    active_database = ""
     limiter = args[0] if args else False
+    active_database = ""    
 
 
-    # can't proceed without options or a database!
+    # can't proceed without a database!
     #
-    if database_provided is None and \
-       scrape_requested is None and \
-       crawl_requested is None:
-        clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
-        exit(0)
-    elif database_provided is None:
+    if database_provided is None:
         clrprint("FAIL", "\n\t $ python glassops.py --help\n\n")
         exit(0)
     else:
         active_database = database_provided
+        db_has_glasses(active_database)
 
 
     # process any additional arguments - LIMITER
