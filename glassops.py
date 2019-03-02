@@ -299,18 +299,18 @@ def main():
 
     parser.add_option('--scrape',
                       action='store_true',
-                      dest='scrp',
+                      dest='scrape',
                       help='scrape html, feed db')
 
     parser.add_option('--crawl',
                       action='store_true',
-                      dest='crwl',
+                      dest='crawl',
                       help='crawl glasses, update db')
 
     (options, args) = parser.parse_args()
     database_provided = options.db
-    scrape_requested = options.scrp
-    crawl_requested = options.crwl
+    scrape_requested = options.scrape
+    crawl_requested = options.crawl
     active_database = ""
 
 
