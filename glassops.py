@@ -98,14 +98,8 @@ def main():
 
         if user_answer == "yes":
             clrprint("OKBLUE", "\n\t[+] [STARTING] scraping more records into database [%s]\n" % active_database)
-            
-            if limiter:
-                scrape_data = scrape_bgpdb(limiter=limit)
-            else:
-                scrape_data = scrape_bgpdb()
-
+            scrape_data = scrape_bgpdb(limiter=limit) if limiter else scrape_data = scrape_bgpdb()
             feed_database(active_database, scrape_data)
-        
         elif user_answer == "no":
             clrprint("WARNING", "\n\t[+] [SKIPPING] not adding anything to database.\n")
         else:
@@ -113,14 +107,8 @@ def main():
     else:
         # --scrape supplied and active_database is empty, proceed with feed_database()
         clrprint("OKBLUE", "\n\t[+] [STARTED] scraping HTML & feeding database...")
-
-        if limiter:
-            scrape_data = scrape_bgpdb(limiter=limit)
-        else:
-            scrape_data = scrape_bgpdb()
-
+        scrape_data = scrape_bgpdb(limiter=limit) if limiter else scrape_data = scrape_bgpdb()
         feed_database(active_database, scrape_data)
-
         clrprint("OKBLUE", "\t    [%s records inserted]\n" % len(scrape_data))
 
 
@@ -131,12 +119,7 @@ def main():
         clrprint("WARNING", "\t[+] [SKIPPING] not updating database [%s] with crawl data.\n" % active_database)
     elif db_has_glasses(active_database):
         clrprint("OKBLUE", "\n\t[+] [STARTED] crawling looking glasses...\n")
-
-        if limiter:
-            crawl_glasses(active_database, limiter=limit)
-        else:
-            crawl_glasses(active_database)
-
+        crawl_glasses(active_database, limiter=limit) if limiter else crawl_glasses(active_database)
     else:
         clrprint("FAIL", "\n\t[+] [ERROR] no URLs to crawl in database [%s]" % active_database)
 
