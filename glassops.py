@@ -3,7 +3,7 @@
 #
 
 from __future__ import print_function
-from core.disco import clrprint, clrz, print_success, print_error, print_redir, print_fail, print_dbf, print_purple
+from core.disco import clrprint, clrz
 from core.db import db_has_glasses
 from core.scrape import scrape_bgpdb, feed_database
 from core.crawl import crawl_glasses
