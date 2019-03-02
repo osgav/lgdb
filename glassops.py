@@ -195,7 +195,7 @@ def probe_glass(lgid, glass_url):
         elif response.ok:
             print_success()
         else:
-            print_failure()
+            print_error()
 
         # GET PROBE DETAILS
         probe_details['http_status'] = response.status_code
@@ -214,19 +214,19 @@ def probe_glass(lgid, glass_url):
         probe_details['response_bytes'] = len(response.text.encode('utf-8'))
 
     except requests.HTTPError as err:
-        print_fuck()
+        print_fail()
         log_exception_details(glass_url, err)
         exception_status = "HTTPERROR"
     except requests.Timeout as err:
-        print_fuck()
+        print_fail()
         log_exception_details(glass_url, err)
         exception_status = "TIMEOUT"
     except requests.ConnectionError as err:
-        print_fuck()
+        print_fail()
         log_exception_details(glass_url, err)
         exception_status = "CONNECTIONERROR"
     except:
-        print_fuck()
+        print_fail()
         log_exception_details(glass_url, "something terrible seems to have happened")
         exception_status = "ERROR 666"
 
@@ -276,19 +276,19 @@ def probe_glass(lgid, glass_url):
     #         print_redir_failure()
 
     # except requests.HTTPError as err:
-    #     print_fuck()
+    #     print_fail()
     #     log_exception_details(glass_url, err)
     #     exception_status = "RED HTTPERROR"
     # except requests.Timeout as err:
-    #     print_fuck()
+    #     print_fail()
     #     log_exception_details(glass_url, err)
     #     exception_status = "RED TIMEOUT"
     # except requests.ConnectionError as err:
-    #     print_fuck()
+    #     print_fail()
     #     log_exception_details(glass_url, err)
     #     exception_status = "RED CONNECTIONERROR"
     # except:
-    #     print_fuck()
+    #     print_fail()
     #     log_exception_details(glass_url, "something terrible seems to have happened")
     #     exception_status = "RED ERROR 666"
 
@@ -373,7 +373,7 @@ def print_success():
     print(clrz['BBG'] + clrz['GREEN'] +"[+]"+ clrz['ENDC'], end="")
     sys.stdout.flush()
 
-def print_failure():
+def print_error():
     '''print a red thing'''
     print(clrz['BBG'] + clrz['FAIL'] +"[-]"+ clrz['ENDC'], end="")
     sys.stdout.flush()
@@ -393,13 +393,13 @@ def print_redir_failure():
     print(clrz['BBG'] + clrz['FAIL'] +"{-}"+ clrz['ENDC'], end="")
     sys.stdout.flush()    
 
-def print_fuck():
-    '''print fuck'''
-    print(clrz['BBG'] + clrz['FAIL'] +"fuck"+ clrz['ENDC'], end="")
+def print_fail():
+    '''print fail'''
+    print(clrz['BBG'] + clrz['FAIL'] +"fail"+ clrz['ENDC'], end="")
     sys.stdout.flush()
 def print_dbf():
-    '''print database fuck'''
-    print(clrz['BBG'] + clrz['FAIL'] +"database fuck"+ clrz['ENDC'], end="")
+    '''print database fail'''
+    print(clrz['BBG'] + clrz['FAIL'] +"database fail"+ clrz['ENDC'], end="")
     sys.stdout.flush()
 
 def print_purple():
