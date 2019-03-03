@@ -4,6 +4,7 @@
 
 from disco import clrprint, clrz
 from db import scrape_db_has_glasses, feed_database
+
 import sqlite3
 from bs4 import BeautifulSoup
 

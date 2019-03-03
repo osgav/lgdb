@@ -2,14 +2,12 @@
 # osgav
 #
 
-from __future__ import print_function
 from core.disco import clrprint, clrz
 from core.scrape import scrape_glasses
 from core.crawl import crawl_glasses
 from core.db import check_scrape_database
 
 import optparse
-import sys
 import time
 
 

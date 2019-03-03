@@ -2,7 +2,6 @@
 # osgav
 #
 
-from __future__ import print_function
 from core.disco import clrprint
 from core.db import create_scrape_database, new_column
 
