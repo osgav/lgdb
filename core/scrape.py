@@ -2,8 +2,8 @@
 # osgav
 #
 
-from disco import clrprint, clrz, print_purple
-from db import scrape_db_has_glasses
+from disco import clrprint, clrz
+from db import scrape_db_has_glasses, feed_database
 import sqlite3
 from bs4 import BeautifulSoup
 
@@ -63,18 +63,3 @@ def scrape_bgpdb(limiter):
             table_data.append(row_data)
     clrprint("GREEN", "\t[+] [DONE] bgpdb.html scraped.\n")
     return table_data[:limiter]
-
-
-def feed_database(scrape_database, scrape_data):
-    '''
-    insert scrape data into sqlite3 database
-    '''
-    with sqlite3.connect(scrape_database) as conn:
-        # FEEEED
-        for row in scrape_data:
-            conn.execute("""
-            insert into glasses (name, asn, glass_url_source)
-            values ('%s', '%s', '%s')
-            """ % (row[0], row[1], row[2]))
-            print_purple()
-    clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] has been fed." % scrape_database)

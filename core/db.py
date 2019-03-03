@@ -2,7 +2,7 @@
 # osgav
 #
 
-from disco import clrprint
+from disco import clrprint, print_purple
 import sqlite3
 import os
 
@@ -79,3 +79,34 @@ def scrape_db_has_glasses(scrape_database):
         return bool(glasscount)
     else:
         return False
+
+
+def feed_database(scrape_database, scrape_data):
+    '''
+    insert scrape data into sqlite3 database
+    '''
+    with sqlite3.connect(scrape_database) as conn:
+        # FEEEED
+        for row in scrape_data:
+            conn.execute("""
+            insert into glasses (name, asn, glass_url_source)
+            values ('%s', '%s', '%s')
+            """ % (row[0], row[1], row[2]))
+            print_purple()
+    clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] has been fed." % scrape_database)
+
+
+def select_all_glasses(scrape_database):
+    with sqlite3.connect(scrape_database) as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM glasses")
+        rows = cur.fetchall()
+        return rows
+
+
+def select_X_glasses(scrape_database, limiter):
+    with sqlite3.connect(scrape_database) as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM glasses")
+        rows = cur.fetchmany(limiter)
+        return rows
