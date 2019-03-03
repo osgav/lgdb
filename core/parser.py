@@ -115,7 +115,6 @@ def get_crawl_details(glass_record, crawl):
     crawl_details = {}
     
     # protocol_source
-    #
     check_https = re.compile(r'^https:\/\/.*')
     url = glass_record[5]  # magic number for glass_url_source
     if len(re.findall(check_https, url)) == 1:
@@ -123,22 +122,16 @@ def get_crawl_details(glass_record, crawl):
     else:
         crawl_details['protocol_source'] = "HTTP"
 
-
     # https_status
-    #
     crawl_details['http_status'] = crawl.status_code
 
-
     # is_redirects
-    #
     if len(crawl.history):
         crawl_details['is_redirect'] = "True"
     else:
         crawl_details['is_redirect'] = "False"
 
-
     # glass_url_destination
-    #
     if not len(crawl.history):
         crawl_details['glass_url_destination'] = crawl.url
     else:
@@ -146,33 +139,25 @@ def get_crawl_details(glass_record, crawl):
         for resp in crawl.history:
             locations.append(resp.headers['Location'])
         crawl_details['glass_url_destination'] = locations[-1]
-        
 
     # protocol_destination
-    #
     url = crawl_details['glass_url_destination']
     if len(re.findall(check_https, url)) == 1:
         crawl_details['protocol_destination'] = "HTTPS"
     else:
         crawl_details['protocol_destination'] = "HTTP"
 
-
     # headers_count
-    #
     crawl_details['headers_count'] = len(crawl.headers)
 
-
     # headers_bytes
-    #
     header_bytes = 0
     for header, value in crawl.headers.iteritems():
         hstring = "%s: %s" % (header, value)
         header_bytes += len(hstring.encode('utf-8'))
     crawl_details['headers_bytes'] = header_bytes
 
-
     # response_bytes
-    #
     crawl_details['response_bytes'] = len(crawl.text.encode('utf-8'))
 
     # done
