@@ -101,3 +101,10 @@ def select_X_glasses(scrape_database, limiter):
         cur.execute("SELECT * FROM glasses")
         rows = cur.fetchmany(limiter)
         return rows
+
+def select_one_glass(scrape_database, lgid):
+    with sqlite3.connect(scrape_database) as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM glasses WHERE lgid = %s" % lgid)
+        rows = cur.fetchall()
+        return rows

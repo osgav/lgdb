@@ -12,6 +12,7 @@ import time
 def probe_glass(glass_url):
     '''
     request glass URL
+    return a "crawl response"
     '''
     exception_status = None
     try:
