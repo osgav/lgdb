@@ -22,7 +22,9 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
     # happy path - there is a response to parse
     crawl = crawl_response['message']
     details_from_crawl = get_crawl_details(glass_record, crawl)
-    details_from_db = select_one_glass(scrape_database, glass_record[0])  # magic number for lgid
+
+    details_from_db_raw = select_one_glass(scrape_database, glass_record[0])  # magic number for lgid
+    details_from_db = mapdbobject(details_from_db_raw)
 
     # compare scrape details with existing data in database
     # only update database if it has changed
@@ -34,6 +36,15 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
     print(details_from_crawl)
     print("....")
     print(details_from_db)
+    print("....")
+    print("....")
+    for key, value in details_from_crawl.iteritems():
+        print("key: %s value: %s" % (key, value))
+    print("....")
+    print("....")
+    for key, value in details_from_db.iteritems():
+        print("key: %s value: %s" % (key, value))
+    print("....")
     print("....")
 
 
@@ -75,6 +86,48 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
 #     return
 
 
+
+
+
+def mapdbobject(db_list_tuple):
+    '''
+    take a list that contains a tuple which represents a row in a database
+    (as returned from sqlite3) map to and return a dictionary
+    '''
+    db_row = db_list_tuple[0]
+
+    lgid = db_row[0]
+    last_updated = db_row[1]
+    last_changed = db_row[2]
+    name = db_row[3]
+    asn = db_row[4]
+    glass_url_source = db_row[5]
+    glass_url_destination = db_row[6]
+    protocol_source = db_row[7]
+    protocol_destination = db_row[8]
+    http_status = db_row[9]
+    is_redirect = db_row[10]
+    headers_count = db_row[11]
+    headers_bytes = db_row[12]
+    response_bytes = db_row[13]
+
+    db_dict = {}
+    db_dict['lgid'] = lgid
+    db_dict['last_updated'] = last_updated
+    db_dict['last_changed'] = last_changed
+    db_dict['name'] = name
+    db_dict['asn'] = asn
+    db_dict['glass_url_source'] = glass_url_source
+    db_dict['glass_url_destination'] = glass_url_destination
+    db_dict['protocol_source'] = protocol_source
+    db_dict['protocol_destination'] = protocol_destination
+    db_dict['http_status'] = http_status
+    db_dict['is_redirect'] = is_redirect
+    db_dict['headers_count'] = headers_count
+    db_dict['headers_bytes'] = headers_bytes
+    db_dict['response_bytes'] = response_bytes
+
+    return db_dict
 
 
 
