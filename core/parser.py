@@ -2,7 +2,7 @@
 # osgav
 #
 
-from disco import clrprint, print_success, print_error, print_redir, print_fail, print_dbf
+from disco import print_dbf
 from db import select_one_glass, \
                update_one_glass_detail, \
                update_one_glass_last_changed, \
