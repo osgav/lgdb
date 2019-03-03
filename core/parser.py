@@ -48,8 +48,6 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
             print("couldn't find %s in the database" % crawl_detail)
             print(err)
 
-    clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] updated (or not) with crawl data." % scrape_database)
-
 
 
 
@@ -136,10 +134,14 @@ def get_crawl_details(glass_record, crawl):
 
     # glass_url_destination
     #
-    locations = []
-    for resp in crawl.history:
-        locations.append(resp.headers['Location'])
-    crawl_details['glass_url_destination'] = locations[-1]  # BROKEN for responses with no redirects..
+    if not len(crawl.history):
+        crawl_details['glass_url_destination'] = crawl.url
+    else:
+        locations = []
+        for resp in crawl.history:
+            locations.append(resp.headers['Location'])
+        crawl_details['glass_url_destination'] = locations[-1]
+        
 
 
     # protocol_destination

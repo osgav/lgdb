@@ -36,3 +36,5 @@ def crawl_glasses(scrape_database, limiter):
             crawl_response = probe_glass(glass_url)
             crawl_parser(scrape_database, glass_record, crawl_response)
             # crawl_logger(glass_record, crawl_response)
+        
+        clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] updated (or not) with crawl data." % scrape_database)
