@@ -3,18 +3,14 @@
 #
 
 from disco import clrprint, print_purple
+from config import default
 
 import sqlite3
 import os
 
 
-#
-# move to a config file
-#
-DB_ROOT = 'database/'
-#
-#
-#
+DB_ROOT = default.DB_ROOT
+
 
 
 
@@ -53,7 +49,7 @@ def check_scrape_database(scrape_database):
     print stats about it if it does
     '''
     if not os.path.exists(scrape_database):
-        clrprint("FAIL", "\t[+] [ERROR] database [%s] does not exist.\n" % scrape_database)
+        clrprint("FAIL", "\n\t[+] [ERROR] database [%s] does not exist." % scrape_database)
     else:
         clrprint("OKBLUE", "\n\t[+] [INFO] database [%s] does indeed exist." % scrape_database)
         with sqlite3.connect(scrape_database) as conn:

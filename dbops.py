@@ -4,18 +4,14 @@
 
 from core.disco import clrprint
 from core.db import create_scrape_database, new_column
+from core.config import default
 
 import optparse
 import time
 
 
-#
-# move to a config file
-#
-LG_DBSCHEMA = 'config/lgdb_schema_ext5.sql' # default schema if none specified via --schema
-#
-#
-#
+DEFAULT_DBSCHEMA = default.DEFAULT_DBSCHEMA
+
 
 
 
@@ -87,8 +83,7 @@ def main():
     elif schema_file is not None:
         db_schema = schema_file
     else:
-        # use default schema file
-        db_schema = LG_DBSCHEMA
+        db_schema = DEFAULT_DBSCHEMA
 
     # set 'active_database'
     #

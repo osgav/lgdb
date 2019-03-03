@@ -6,19 +6,16 @@ from core.disco import clrprint, clrz
 from core.scrape import scrape_glasses
 from core.crawl import crawl_glasses
 from core.db import check_scrape_database
+from core.config import default
 
 import optparse
 import time
 
 
-#
-# move to a config file
-#
-DEFAULT_LIMIT = 1
-DB_ROOT = 'database/'
-#
-#
-#
+DEFAULT_LIMIT = default.DEFAULT_LIMIT
+DB_ROOT = default.DB_ROOT
+
+
 
 
 USAGE = """
