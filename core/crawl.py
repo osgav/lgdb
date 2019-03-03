@@ -31,10 +31,8 @@ def crawl_glasses(scrape_database, limiter):
         glasses = select_X_glasses(scrape_database, limiter)
 
         for glass_record in glasses:  # glass_record = a tuple representing a row from the database
-            glass_url = glass_record[5]  # magic number - find way to retrieve URL more clearly
+            glass_url = glass_record[5]  # magic number for glass_url - find way to retrieve more clearly
 
-            crawl_response = probe_glass(glass_url)           # exception handling in prober, it will always return object to pass along
-            crawl_parser(scrape_database, glass_record, crawl_response)       # parser and
-            # crawl_logger(glass_record, crawl_response)                      # logger will both
-                                                                               # determine what to do with 'responses' vs 'exceptions'
-                                                                               # on their own
+            crawl_response = probe_glass(glass_url)
+            crawl_parser(scrape_database, glass_record, crawl_response)
+            # crawl_logger(glass_record, crawl_response)

@@ -11,6 +11,10 @@ def crawl_logger(glass, crawl_response):
     log raw response details 
     or exception message to a file
     '''
+    #
+    # review contents of crawl_response['probe_result'] to decide on actions...
+    #
+    
     pass
 
 
