@@ -9,9 +9,6 @@ import sqlite3
 import os
 
 
-DB_ROOT = default.DB_ROOT
-
-
 
 
 def create_scrape_database(name, schema):
