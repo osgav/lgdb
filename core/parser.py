@@ -3,7 +3,7 @@
 #
 
 from disco import clrprint, print_success, print_error, print_redir, print_fail, print_dbf
-from db import select_one_glass
+from db import select_one_glass, update_one_glass_detail, update_one_glass_last_changed, update_one_glass_last_checked
 
 import re
 import time
@@ -26,65 +26,29 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
     details_from_db_raw = select_one_glass(scrape_database, glass_record[0])  # magic number for lgid
     details_from_db = mapdbobject(details_from_db_raw)
 
-    # compare scrape details with existing data in database
-    # only update database if it has changed
-    # but always run at least 1 query updating 'last_updated' or 'last_run' field    
+    # determine if crawl data differs from entry in database
+    # and update the database if it does
+    #
+    for crawl_detail, crawl_value in details_from_crawl.iteritems():
+        try:
 
-    print("details from crawl type: %s" % type(details_from_crawl))
-    print("details from db type: %s" % type(details_from_db))
-    print("....")
-    print(details_from_crawl)
-    print("....")
-    print(details_from_db)
-    print("....")
-    print("....")
-    for key, value in details_from_crawl.iteritems():
-        print("key: %s value: %s" % (key, value))
-    print("....")
-    print("....")
-    for key, value in details_from_db.iteritems():
-        print("key: %s value: %s" % (key, value))
-    print("....")
-    print("....")
+            if str(details_from_db[crawl_detail]).encode('utf-8') == str(crawl_value).encode('utf-8'):
+                database_was_changed = False
+            else:
+                update_one_glass_detail(scrape_database, glass_record, crawl_detail, crawl_value)
+                database_was_changed = True
 
+            if database_was_changed:
+                update_one_glass_last_changed(scrape_database, glass_record, crawl_response['probe_timestamp'])
 
-#                 # check if crawl data in database needs updated or not first
-#                 for key, value in probe_details.iteritems():
+            update_one_glass_last_checked(scrape_database, glass_record, crawl_response['probe_timestamp'])
 
-#                     # select current data for comparison to new data
-#                     cursor.execute('select lgid, %s from glasses where lgid = %d' \
-#                     % (key, lgid))
+        except Exception as err:
+            print_dbf()
+            print("couldn't find %s in the database" % crawl_detail)
+            print(err)
 
-#                     for detail in cursor.fetchall():
-#                         lgid, current_value = detail
-
-#                         if str(current_value).encode('utf-8') == str(value).encode('utf-8'):
-#                             database_was_updated = False
-#                         else:
-#                             # update database: overwrite current_value with (new) value
-#                             cursor.execute('update glasses set %s = "%s" where lgid = %d' \
-#                             % (key, value, lgid))
-#                             database_was_updated = True
-
-#                 # update last_changed if necessary
-#                 if database_was_updated:
-#                     cursor.execute('update glasses set last_changed = "%s" where lgid = %d' \
-#                     % (last_updated, lgid))
-
-#                 # update last_updated
-#                 cursor.execute('update glasses set last_updated = "%s" where lgid = %d' \
-#                 % (last_updated, lgid))
-
-#                 conn.commit()
-
-#             except Exception as err:
-#                 print_dbf()
-#                 print("\n\n")
-#                 print(err)
-
-#     clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] updated with crawl data." % scrape_database)
-#     return
-
+    clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] updated (or not) with crawl data." % scrape_database)
 
 
 
@@ -128,7 +92,6 @@ def mapdbobject(db_list_tuple):
     db_dict['response_bytes'] = response_bytes
 
     return db_dict
-
 
 
 def get_crawl_details(glass_record, crawl):
@@ -176,7 +139,7 @@ def get_crawl_details(glass_record, crawl):
     locations = []
     for resp in crawl.history:
         locations.append(resp.headers['Location'])
-    crawl_details['glass_url_destination'] = locations[-1]
+    crawl_details['glass_url_destination'] = locations[-1]  # BROKEN for responses with no redirects..
 
 
     # protocol_destination

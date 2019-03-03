@@ -108,3 +108,27 @@ def select_one_glass(scrape_database, lgid):
         cur.execute("SELECT * FROM glasses WHERE lgid = %s" % lgid)
         rows = cur.fetchall()
         return rows
+
+def update_one_glass_detail(scrape_database, glass_record, detail, new_value):
+    with sqlite3.connect(scrape_database) as conn:
+        cur = conn.cursor()
+        cur.execute('UPDATE glasses SET %s = "%s" WHERE lgid = %d' % (detail, new_value, glass_record[0]))  # magic number for lgid
+        conn.commit()
+        return
+
+def update_one_glass_last_changed(scrape_database, glass_record, timestamp):
+    with sqlite3.connect(scrape_database) as conn:
+        cur = conn.cursor()
+        cur.execute('UPDATE glasses SET last_changed = "%s" WHERE lgid = %d' % (timestamp, glass_record[0]))  # magic number for lgid
+        conn.commit()
+        return
+
+def update_one_glass_last_checked(scrape_database, glass_record, timestamp):
+    with sqlite3.connect(scrape_database) as conn:
+        cur = conn.cursor()
+        cur.execute('UPDATE glasses SET last_updated = "%s" WHERE lgid = %d' % (timestamp, glass_record[0]))  # magic number for lgid
+        #
+        # change db schema to create last_checked field instead of last_updated
+        #
+        conn.commit()
+        return
