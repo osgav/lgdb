@@ -6,6 +6,13 @@ import time
 
 
 
+def scrape_logger(glass, crawl_response):
+    '''
+    log raw response details 
+    or exception message to a file
+    '''
+    pass
+
 
 # logging - headers, redirects and exceptions
 #
