@@ -11,29 +11,29 @@ import time
 
 
 
-def scrape_parser(scrape_database, glass_record, crawl_response):
+def crawl_parser(scrape_database, glass_record, crawl_response):
     '''
-    parse crawl data into scrape database
+    parse "crawl responses" into scrape database
     '''
     #
     # review contents of crawl_response['probe_result'] to decide on actions...
     #
 
     # happy path - there is a response to parse
-    scrape = crawl_response['message']
-    scrape_details_from_scrape = collect_details(glass_record, scrape)
-    scrape_details_from_db = select_one_glass(scrape_database, glass_record[0])  # magic number for lgid
+    crawl = crawl_response['message']
+    details_from_crawl = get_crawl_details(glass_record, crawl)
+    details_from_db = select_one_glass(scrape_database, glass_record[0])  # magic number for lgid
 
     # compare scrape details with existing data in database
     # only update database if it has changed
     # but always run at least 1 query updating 'last_updated' or 'last_run' field    
 
-    print("details from scrape type: %s" % type(scrape_details_from_scrape))
-    print("details from db type: %s" % type(scrape_details_from_db))
+    print("details from crawl type: %s" % type(details_from_crawl))
+    print("details from db type: %s" % type(details_from_db))
     print("....")
-    print(scrape_details_from_scrape)
+    print(details_from_crawl)
     print("....")
-    print(scrape_details_from_db)
+    print(details_from_db)
     print("....")
 
 
@@ -78,7 +78,7 @@ def scrape_parser(scrape_database, glass_record, crawl_response):
 
 
 
-def collect_details(glass_record, scrape):
+def get_crawl_details(glass_record, crawl):
     '''
     take a requests 'response' object and parse details out of it
     return details in a dict
@@ -94,64 +94,64 @@ def collect_details(glass_record, scrape):
     #   headers_bytes
     #   response_bytes
     #
-    scrape_details = {}
+    crawl_details = {}
     
     # protocol_source
     #
     check_https_url_src = re.compile(r'^https:\/\/.*')
     if len(re.findall(check_https_url_src, glass_record[5])) == 1:  # magic number again for glass_url
-        scrape_details['protocol_source'] = "HTTPS"
+        crawl_details['protocol_source'] = "HTTPS"
     else:
-        scrape_details['protocol_source'] = "HTTP"
+        crawl_details['protocol_source'] = "HTTP"
 
 
     # https_status
     #
-    scrape_details['http_status'] = scrape.status_code
+    crawl_details['http_status'] = crawl.status_code
 
 
     # is_redirects
     #
-    if len(scrape.history):
-        scrape_details['is_redirect'] = "True"
+    if len(crawl.history):
+        crawl_details['is_redirect'] = "True"
     else:
-        scrape_details['is_redirect'] = "False"
+        crawl_details['is_redirect'] = "False"
 
 
     # glass_url_destination
     #
     locations = []
-    for resp in scrape.history:
+    for resp in crawl.history:
         locations.append(resp.headers['Location'])
-    scrape_details['glass_url_destination'] = locations[-1]
+    crawl_details['glass_url_destination'] = locations[-1]
 
 
     # protocol_destination
     #
     check_https_url_dest = re.compile(r'^https:\/\/.*')
-    if len(re.findall(check_https_url_dest, scrape_details['glass_url_destination'])) == 1:
-        scrape_details['protocol_destination'] = "HTTPS"
+    if len(re.findall(check_https_url_dest, crawl_details['glass_url_destination'])) == 1:
+        crawl_details['protocol_destination'] = "HTTPS"
     else:
-        scrape_details['protocol_destination'] = "HTTP"
+        crawl_details['protocol_destination'] = "HTTP"
 
 
     # headers_count
     #
-    scrape_details['headers_count'] = len(scrape.headers)
+    crawl_details['headers_count'] = len(crawl.headers)
 
 
     # headers_bytes
     #
     header_bytes = 0
-    for header, value in scrape.headers.iteritems():
+    for header, value in crawl.headers.iteritems():
         hstring = "%s: %s" % (header, value)
         header_bytes += len(hstring.encode('utf-8'))
-    scrape_details['headers_bytes'] = header_bytes
+    crawl_details['headers_bytes'] = header_bytes
 
 
     # response_bytes
     #
-    scrape_details['response_bytes'] = len(scrape.text.encode('utf-8'))
+    crawl_details['response_bytes'] = len(crawl.text.encode('utf-8'))
 
     # done
-    return scrape_details
+    return crawl_details

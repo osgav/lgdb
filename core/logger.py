@@ -6,7 +6,7 @@ import time
 
 
 
-def scrape_logger(glass, crawl_response):
+def crawl_logger(glass, crawl_response):
     '''
     log raw response details 
     or exception message to a file
