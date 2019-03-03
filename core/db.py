@@ -18,16 +18,13 @@ def create_scrape_database(name, schema):
     '''
     create sqlite3 database for storing scrape data
     '''
-
-    scrape_database = "%s%s.sqlite3" % (DB_ROOT, name)
-    if os.path.exists(scrape_database):
-        clrprint("FAIL", "\t[+] [FAIL] database [%s] already exists.\n" % name)
+    if os.path.exists(name):
+        clrprint("FAIL", "\t[+] [FAIL] database [%s] already exists." % name)
     else:
-        with sqlite3.connect(scrape_database) as conn:
+        with sqlite3.connect(name) as conn:
             with open(schema, 'rt') as handle:
-                apply_schema = handle.read()
-                conn.executescript(apply_schema)
-
+                scrape_db_schema = handle.read()
+                conn.executescript(scrape_db_schema)
         clrprint("GREEN", "\t[+] [DONE] created [%s] database with [%s] schema." % (name, schema))
 
 

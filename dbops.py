@@ -10,6 +10,7 @@ import optparse
 import time
 
 
+DB_ROOT = default.DB_ROOT
 DEFAULT_DBSCHEMA = default.DEFAULT_DBSCHEMA
 
 
@@ -68,46 +69,39 @@ def main():
     schema_file = options.sf
     col_name = options.col
     col_type = options.dt
-    active_database = ""
+    
 
-
-    # can't proceed with no options!
+    # process command line options
     #
-    if database_requested is None and \
-       schema_file is None and \
-       database_provided is None and \
-       col_name is None and \
-       col_type is None:
-        clrprint("FAIL", "\n\t $ python dbops.py --help\n\n")
-        exit(0)
-    elif schema_file is not None:
-        db_schema = schema_file
-    else:
-        db_schema = DEFAULT_DBSCHEMA
-
-    # set 'active_database'
+    # new or existing database is required
+    if database_requested is None and database_provided is None:
+        clrprint("FAIL", "\n\t[+] [ERROR] must specify either new or existing database name.")
     #
-    if database_requested is None:
-        clrprint("WARNING", "\n\t[+] [SKIPPING] not creating new database.")
-        if database_provided is None:
-            clrprint("FAIL", "\t[+] [ERROR] must specify either new or existing database name.\n")
-            exit(0)
-        else:
-            active_database = database_provided
-    else:
+    # new database with default schema
+    elif database_requested is not None and schema_file is None:
         clrprint("OKBLUE", "\n\t[+] [STARTED] creating new scrape database... [%s]" % database_requested)
-        active_database = database_requested
-        create_scrape_database(active_database, db_schema)
-
-    # column to be added?
+        name = "%s%s.sqlite3" % (DB_ROOT, database_requested)
+        create_scrape_database(name, DEFAULT_DBSCHEMA)
     #
-    if col_name is not None and col_type is not None:
-
-        # add column to active_database!
-        clrprint("OKBLUE", "\n\t[+] [STARTED] adding column [%s] to database [%s]" % (col_name, active_database))
-        new_column(active_database, col_name, col_type)
+    # new database with custom schema
+    elif database_requested is not None and schema_file is not None:
+        clrprint("OKBLUE", "\n\t[+] [STARTED] creating new scrape database... [%s]" % database_requested)
+        name = "%s%s.sqlite3" % (DB_ROOT, database_requested)
+        create_scrape_database(name, schema_file)
+    #
+    # existing database and schema - not allowed
+    elif database_provided is not None and schema_file is not None:
+        clrprint("FAIL", "\n\t[+] [ERROR] schemas can only be applied to new databases.")
+    #
+    # existing database with new column details
+    elif database_provided is not None and col_name is not None and col_type is not None:
+        scrape_database = "%s%s.sqlite3" % (DB_ROOT, database_provided)
+        clrprint("OKBLUE", "\n\t[+] [STARTED] adding [%s] column [%s] to database [%s]" % (col_type, col_name, scrape_database))
+        new_column(scrape_database, col_name, col_type)
+    #
+    # invalid options provided
     else:
-        clrprint("WARNING", "\n\t[+] [SKIPPING] no columns to be added.")
+        clrprint("FAIL", "\n\t[+] [ERROR] you seem to have entered invalid options, see dbops.py --help")
 
 
     # dbops.py exit point
