@@ -3,7 +3,10 @@
 #
 
 from disco import clrprint, print_success, print_error, print_redir, print_fail, print_dbf
-from db import select_one_glass, update_one_glass_detail, update_one_glass_last_changed, update_one_glass_last_checked
+from db import select_one_glass, \
+               update_one_glass_detail, \
+               update_one_glass_last_changed, \
+               update_one_glass_last_checked
 
 import re
 import time
@@ -15,40 +18,41 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
     '''
     parse "crawl responses" into scrape database
     '''
-    #
-    # review contents of crawl_response['probe_result'] to decide on actions...
-    #
+    if crawl_response['probe_result'] == "exception":
+        pass
+        # exception = crawl_response['message']
+        # exception_name = exception.split(":")[0]
+        #
+        # hmm probably better to not repeat previous logic and
+        # log made up exception name into the subset
+        # of columns updated by a crawl...
+        #
+        # add a column last_check_status ?
+        # populate with 'success' or 'exception: <details>' ?
+        #
 
-    # happy path - there is a response to parse
-    crawl = crawl_response['message']
-    details_from_crawl = get_crawl_details(glass_record, crawl)
+    else:
+        crawl = crawl_response['message']
+        details_from_crawl = get_crawl_details(glass_record, crawl)
+        details_from_db_raw = select_one_glass(scrape_database, glass_record[0])  # magic number for lgid
+        details_from_db = mapdbobject(details_from_db_raw)
 
-    details_from_db_raw = select_one_glass(scrape_database, glass_record[0])  # magic number for lgid
-    details_from_db = mapdbobject(details_from_db_raw)
+        # if crawl data differs from data in db, update the db
+        for crawl_detail, crawl_value in details_from_crawl.iteritems():
 
-    # determine if crawl data differs from entry in database
-    # and update the database if it does
-    #
-    for crawl_detail, crawl_value in details_from_crawl.iteritems():
-        try:
+            try:
+                data_from_crawl = str(crawl_value).encode('utf-8')
+                data_from_db = str(details_from_db[crawl_detail]).encode('utf-8')
 
-            if str(details_from_db[crawl_detail]).encode('utf-8') == str(crawl_value).encode('utf-8'):
-                database_was_changed = False
-            else:
-                update_one_glass_detail(scrape_database, glass_record, crawl_detail, crawl_value)
-                database_was_changed = True
+                if data_from_crawl != data_from_db:
+                    update_one_glass_detail(scrape_database, glass_record, crawl_detail, crawl_value)
+                    update_one_glass_last_changed(scrape_database, glass_record, crawl_response['probe_timestamp'])
 
-            if database_was_changed:
-                update_one_glass_last_changed(scrape_database, glass_record, crawl_response['probe_timestamp'])
+                update_one_glass_last_checked(scrape_database, glass_record, crawl_response['probe_timestamp'])
 
-            update_one_glass_last_checked(scrape_database, glass_record, crawl_response['probe_timestamp'])
-
-        except Exception as err:
-            print_dbf()
-            print("couldn't find %s in the database" % crawl_detail)
-            print(err)
-
-
+            except Exception as err:
+                print_dbf()
+                print("crawl_parser: error comparing / updating the database: %s" % err)
 
 
 def mapdbobject(db_list_tuple):
@@ -112,8 +116,9 @@ def get_crawl_details(glass_record, crawl):
     
     # protocol_source
     #
-    check_https_url_src = re.compile(r'^https:\/\/.*')
-    if len(re.findall(check_https_url_src, glass_record[5])) == 1:  # magic number again for glass_url
+    check_https = re.compile(r'^https:\/\/.*')
+    url = glass_record[5]  # magic number for glass_url_source
+    if len(re.findall(check_https, url)) == 1:
         crawl_details['protocol_source'] = "HTTPS"
     else:
         crawl_details['protocol_source'] = "HTTP"
@@ -143,11 +148,10 @@ def get_crawl_details(glass_record, crawl):
         crawl_details['glass_url_destination'] = locations[-1]
         
 
-
     # protocol_destination
     #
-    check_https_url_dest = re.compile(r'^https:\/\/.*')
-    if len(re.findall(check_https_url_dest, crawl_details['glass_url_destination'])) == 1:
+    url = crawl_details['glass_url_destination']
+    if len(re.findall(check_https, url)) == 1:
         crawl_details['protocol_destination'] = "HTTPS"
     else:
         crawl_details['protocol_destination'] = "HTTP"

@@ -40,9 +40,10 @@ def probe_glass(glass_url):
         exception_status = "CONNECTIONERROR: %s" % err
     except Exception as err:
         print_fail()
-        exception_status = "ERROR 666: %s" % err
+        exception_status = "ERROR666: %s" % err
 
     finally:
+
         if exception_status:
             return {
                 "probe_result": "exception",
