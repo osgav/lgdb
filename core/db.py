@@ -3,7 +3,6 @@
 #
 
 from disco import clrprint, print_purple
-from config import default
 
 import sqlite3
 import os
@@ -126,9 +125,6 @@ def update_one_glass_last_changed(scrape_database, glass_record, timestamp):
 def update_one_glass_last_checked(scrape_database, glass_record, timestamp):
     with sqlite3.connect(scrape_database) as conn:
         cur = conn.cursor()
-        cur.execute('UPDATE glasses SET last_updated = "%s" WHERE lgid = %d' % (timestamp, glass_record[0]))  # magic number for lgid
-        #
-        # change db schema to create last_checked field instead of last_updated
-        #
+        cur.execute('UPDATE glasses SET last_checked = "%s" WHERE lgid = %d' % (timestamp, glass_record[0]))  # magic number for lgid
         conn.commit()
         return

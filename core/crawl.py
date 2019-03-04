@@ -8,16 +8,9 @@ from prober import probe_glass
 from parser import crawl_parser
 from logger import crawl_logger
 
-import sqlite3
-import requests
-import re
-import time
 
 
 
-
-# entrypoint
-#
 def crawl_glasses(scrape_database, limiter):
     '''
     confirm database has glass URLs to crawl
@@ -30,10 +23,10 @@ def crawl_glasses(scrape_database, limiter):
         clrprint("OKBLUE", "\n\t[+] [STARTED] crawling looking glasses...\n")
         glasses = select_X_glasses(scrape_database, limiter)
 
-        for glass_record in glasses: 
+        for glass_record in glasses:
             glass_url = glass_record[5]  # magic number for glass_url
             crawl_response = probe_glass(glass_url)
-            crawl_parser(scrape_database, glass_record, crawl_response)
             crawl_logger(glass_record, crawl_response)
-        
+            crawl_parser(scrape_database, glass_record, crawl_response)
+
         clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] updated (or not) with crawl data." % scrape_database)

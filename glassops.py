@@ -2,7 +2,7 @@
 # osgav
 #
 
-from core.disco import clrprint, clrz
+from core.disco import clrprint
 from core.scrape import scrape_glasses
 from core.crawl import crawl_glasses
 from core.db import check_scrape_database

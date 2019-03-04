@@ -69,7 +69,7 @@ def main():
     schema_file = options.sf
     col_name = options.col
     col_type = options.dt
-    
+
 
     # process command line options
     #

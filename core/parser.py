@@ -9,7 +9,6 @@ from db import select_one_glass, \
                update_one_glass_last_checked
 
 import re
-import time
 
 
 
@@ -63,7 +62,7 @@ def mapdbobject(db_list_tuple):
     db_row = db_list_tuple[0]
 
     lgid = db_row[0]
-    last_updated = db_row[1]
+    last_checked = db_row[1]
     last_changed = db_row[2]
     name = db_row[3]
     asn = db_row[4]
@@ -79,7 +78,7 @@ def mapdbobject(db_list_tuple):
 
     db_dict = {}
     db_dict['lgid'] = lgid
-    db_dict['last_updated'] = last_updated
+    db_dict['last_checked'] = last_checked
     db_dict['last_changed'] = last_changed
     db_dict['name'] = name
     db_dict['asn'] = asn
@@ -113,7 +112,7 @@ def get_crawl_details(glass_record, crawl):
     #   response_bytes
     #
     crawl_details = {}
-    
+
     # protocol_source
     check_https = re.compile(r'^https:\/\/.*')
     url = glass_record[5]  # magic number for glass_url_source

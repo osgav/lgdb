@@ -2,8 +2,6 @@
 # osgav
 #
 
-import time
-
 
 
 def crawl_logger(glass_record, crawl_response):
