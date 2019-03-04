@@ -3,7 +3,7 @@
 --
 
 create table glasses (
-    lgid                    integer primary key autoincrement not null,
+    lgid                    integer primary key autoincrement,
     last_checked            text,
     last_changed            text,    
     name                    text,
