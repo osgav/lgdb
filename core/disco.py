@@ -41,7 +41,7 @@ def print_error():
 def print_redir():
     '''print a yellow thing'''
     print(clrz['BBG'] + clrz['WARNING'] +"[-]"+ clrz['ENDC'], end="")
-    sys.stdout.flush()  
+    sys.stdout.flush()
 
 def print_fail():
     '''print fail'''

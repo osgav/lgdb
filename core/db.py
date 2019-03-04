@@ -3,7 +3,6 @@
 #
 
 from disco import clrprint, print_purple
-from config import default
 
 import sqlite3
 import os

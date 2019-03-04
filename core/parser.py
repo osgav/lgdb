@@ -9,7 +9,6 @@ from db import select_one_glass, \
                update_one_glass_last_checked
 
 import re
-import time
 
 
 
@@ -113,7 +112,7 @@ def get_crawl_details(glass_record, crawl):
     #   response_bytes
     #
     crawl_details = {}
-    
+
     # protocol_source
     check_https = re.compile(r'^https:\/\/.*')
     url = glass_record[5]  # magic number for glass_url_source
