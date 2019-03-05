@@ -3,7 +3,7 @@
 #
 
 from disco import clrprint
-from db import scrape_db_has_glasses, select_all_glasses, select_X_glasses
+from db import scrape_db_has_glasses, select_X_glasses
 from prober import probe_glass
 from parser import crawl_parser
 from logger import crawl_logger
