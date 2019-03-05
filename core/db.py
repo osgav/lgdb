@@ -4,6 +4,7 @@
 
 from disco import clrprint, print_purple
 
+import sqlalchemy
 import sqlite3
 import os
 
@@ -86,45 +87,47 @@ def feed_database(scrape_database, scrape_data):
     clrprint("GREEN", "\n\n\t[+] [DONE] database [%s] has been fed." % scrape_database)
 
 
-def select_all_glasses(scrape_database):
-    with sqlite3.connect(scrape_database) as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM glasses")
-        rows = cur.fetchall()
-        return rows
 
+
+def connect_to_scrape_database(name):
+    '''
+    return connection to named database
+    '''
+    engine = sqlalchemy.create_engine('sqlite:///%s' % name)
+    connection = engine.connect()
+    return connection
 
 def select_X_glasses(scrape_database, limiter):
-    with sqlite3.connect(scrape_database) as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM glasses")
-        rows = cur.fetchmany(limiter)
-        return rows
+    conn = connect_to_scrape_database(scrape_database)
+    select = "SELECT * FROM glasses"
+    result = conn.execute(select).fetchmany(limiter)
+    conn.close()
+    return result
 
 def select_one_glass(scrape_database, lgid):
-    with sqlite3.connect(scrape_database) as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM glasses WHERE lgid = %s" % lgid)
-        rows = cur.fetchall()
-        return rows
+    conn = connect_to_scrape_database(scrape_database)
+    select = "SELECT * FROM glasses WHERE lgid = :id"
+    result = conn.execute(select, id=lgid).fetchall()
+    conn.close()
+    return result
 
 def update_one_glass_detail(scrape_database, glass_record, detail, new_value):
-    with sqlite3.connect(scrape_database) as conn:
-        cur = conn.cursor()
-        cur.execute('UPDATE glasses SET %s = "%s" WHERE lgid = %d' % (detail, new_value, glass_record[0]))  # magic number for lgid
-        conn.commit()
-        return
+    conn = connect_to_scrape_database(scrape_database)
+    update = "UPDATE glasses SET %s = :new_value WHERE lgid = :id" % detail
+    conn.execute(update, new_value=new_value, id=glass_record[0])  # magic number for lgid
+    conn.close()
+    return
 
 def update_one_glass_last_changed(scrape_database, glass_record, timestamp):
-    with sqlite3.connect(scrape_database) as conn:
-        cur = conn.cursor()
-        cur.execute('UPDATE glasses SET last_changed = "%s" WHERE lgid = %d' % (timestamp, glass_record[0]))  # magic number for lgid
-        conn.commit()
-        return
+    conn = connect_to_scrape_database(scrape_database)
+    update = "UPDATE glasses SET last_changed = :timestamp WHERE lgid = :id"
+    conn.execute(update, timestamp=timestamp, id=glass_record[0])  # magic number for lgid
+    conn.close()
+    return
 
 def update_one_glass_last_checked(scrape_database, glass_record, timestamp):
-    with sqlite3.connect(scrape_database) as conn:
-        cur = conn.cursor()
-        cur.execute('UPDATE glasses SET last_checked = "%s" WHERE lgid = %d' % (timestamp, glass_record[0]))  # magic number for lgid
-        conn.commit()
-        return
+    conn = connect_to_scrape_database(scrape_database)
+    update = "UPDATE glasses SET last_checked = :timestamp WHERE lgid = :id"
+    conn.execute(update, timestamp=timestamp, id=glass_record[0])  # magic number for lgid
+    conn.close()
+    return
