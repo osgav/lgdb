@@ -15,10 +15,9 @@ def probe_glass(glass_url):
     return a "crawl response"
     '''
     exception_status = None
+    localtime = time.localtime()
+    probe_timestamp = time.strftime("%Y-%m-%d %H:%M:%S %z", localtime)
     try:
-
-        localtime = time.localtime()
-        probe_timestamp = time.strftime("%Y-%m-%d %H:%M:%S %z", localtime)
 
         response = requests.get(glass_url)
 
@@ -29,30 +28,28 @@ def probe_glass(glass_url):
         else:
             print_error()
 
+        return crawl_response("success", probe_timestamp, response)
+
     except requests.HTTPError as err:
         print_fail()
         exception_status = "HTTPERROR: %s" % err
+        return crawl_response("exception", probe_timestamp, exception_status)
     except requests.Timeout as err:
         print_fail()
         exception_status = "TIMEOUT: %s" % err
+        return crawl_response("exception", probe_timestamp, exception_status)
     except requests.ConnectionError as err:
         print_fail()
         exception_status = "CONNECTIONERROR: %s" % err
+        return crawl_response("exception", probe_timestamp, exception_status)
     except Exception as err:
         print_fail()
         exception_status = "ERROR666: %s" % err
+        return crawl_response("exception", probe_timestamp, exception_status)
 
-    finally:
-
-        if exception_status:
-            return {
-                "probe_result": "exception",
-                "probe_timestamp": probe_timestamp,
-                "message": exception_status
-            }
-        else:
-            return {
-                "probe_result": "response",
-                "probe_timestamp": probe_timestamp,
-                "message": response
-            }
+def crawl_response(status, timestamp, message):
+    return {
+        "probe_result": status,
+        "probe_timestamp": timestamp,
+        "probe_message": message
+    }

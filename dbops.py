@@ -63,7 +63,7 @@ def main():
                       type='string',
                       help='specify new column data type')
 
-    (options, args) = parser.parse_args()
+    options = parser.parse_args()[0]
     database_requested = options.newdb
     database_provided = options.db
     schema_file = options.sf

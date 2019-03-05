@@ -31,7 +31,7 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
         #
 
     else:
-        crawl = crawl_response['message']
+        crawl = crawl_response['probe_message']
         details_from_crawl = get_crawl_details(glass_record, crawl)
         details_from_db_raw = select_one_glass(scrape_database, glass_record[0])  # magic number for lgid
         details_from_db = mapdbobject(details_from_db_raw)
