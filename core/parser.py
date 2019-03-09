@@ -4,9 +4,10 @@
 
 from disco import print_dbf
 from db import select_one_glass, \
-               update_one_glass_detail, \
+               update_one_glass_column, \
                update_one_glass_last_changed, \
-               update_one_glass_last_checked
+               update_one_glass_last_checked, \
+               mapdbobject
 
 import re
 
@@ -44,7 +45,7 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
                 data_from_db = str(details_from_db[crawl_detail]).encode('utf-8')
 
                 if data_from_crawl != data_from_db:
-                    update_one_glass_detail(scrape_database, glass_record, crawl_detail, crawl_value)
+                    update_one_glass_column(scrape_database, glass_record, crawl_detail, crawl_value)
                     update_one_glass_last_changed(scrape_database, glass_record, crawl_response['probe_timestamp'])
 
                 update_one_glass_last_checked(scrape_database, glass_record, crawl_response['probe_timestamp'])
@@ -54,50 +55,11 @@ def crawl_parser(scrape_database, glass_record, crawl_response):
                 print("crawl_parser: error comparing / updating the database: %s" % err)
 
 
-def mapdbobject(db_list_tuple):
-    '''
-    take a list that contains a tuple which represents a row in a database
-    (as returned from sqlite3) map to and return a dictionary
-    '''
-    db_row = db_list_tuple[0]
-
-    lgid = db_row[0]
-    last_checked = db_row[1]
-    last_changed = db_row[2]
-    name = db_row[3]
-    asn = db_row[4]
-    glass_url_source = db_row[5]
-    glass_url_destination = db_row[6]
-    protocol_source = db_row[7]
-    protocol_destination = db_row[8]
-    http_status = db_row[9]
-    is_redirect = db_row[10]
-    headers_count = db_row[11]
-    headers_bytes = db_row[12]
-    response_bytes = db_row[13]
-
-    db_dict = {}
-    db_dict['lgid'] = lgid
-    db_dict['last_checked'] = last_checked
-    db_dict['last_changed'] = last_changed
-    db_dict['name'] = name
-    db_dict['asn'] = asn
-    db_dict['glass_url_source'] = glass_url_source
-    db_dict['glass_url_destination'] = glass_url_destination
-    db_dict['protocol_source'] = protocol_source
-    db_dict['protocol_destination'] = protocol_destination
-    db_dict['http_status'] = http_status
-    db_dict['is_redirect'] = is_redirect
-    db_dict['headers_count'] = headers_count
-    db_dict['headers_bytes'] = headers_bytes
-    db_dict['response_bytes'] = response_bytes
-
-    return db_dict
 
 
 def get_crawl_details(glass_record, crawl):
     '''
-    take a requests 'response' object and parse details out of it
+    take a 'requests.models.Response' object and parse details out of it
     return details in a dict
     '''
     # details to collect:
@@ -158,6 +120,21 @@ def get_crawl_details(glass_record, crawl):
 
     # response_bytes
     crawl_details['response_bytes'] = len(crawl.text.encode('utf-8'))
+
+    # COLLECT MORE DETAILS...
+    #
+    # page title
+    #
+    # script tags: head vs body
+    #
+    # line count and word count
+    #
+    # HTML comments: lines and bytes
+    #
+    # page load time (DNS, TCP, SSL, TTFB, TTLB...)
+    #
+    # HTTP 3xx: same domain or different domain?
+    #
 
     # done
     return crawl_details

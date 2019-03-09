@@ -46,7 +46,7 @@ def log_exception_details(lgid, glass_url, crawl_response):
     '''
     write exceptions to log file
     '''
-    exception_obj = crawl_response['message']
+    exception_obj = crawl_response['probe_message']
     time_string = crawl_response['probe_timestamp']
 
     with open("exceptions.log", "a") as logfile:

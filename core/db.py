@@ -89,6 +89,49 @@ def feed_database(scrape_database, scrape_data):
 
 
 
+def mapdbobject(db_list_tuple):
+    '''
+    take a list that contains a tuple which represents a row in a database
+    (as returned from sqlite3) map to and return a dictionary
+    '''
+    db_row = db_list_tuple[0]
+
+    lgid = db_row[0]
+    last_checked = db_row[1]
+    last_changed = db_row[2]
+    name = db_row[3]
+    asn = db_row[4]
+    glass_url_source = db_row[5]
+    glass_url_destination = db_row[6]
+    protocol_source = db_row[7]
+    protocol_destination = db_row[8]
+    http_status = db_row[9]
+    is_redirect = db_row[10]
+    headers_count = db_row[11]
+    headers_bytes = db_row[12]
+    response_bytes = db_row[13]
+
+    db_dict = {}
+    db_dict['lgid'] = lgid
+    db_dict['last_checked'] = last_checked
+    db_dict['last_changed'] = last_changed
+    db_dict['name'] = name
+    db_dict['asn'] = asn
+    db_dict['glass_url_source'] = glass_url_source
+    db_dict['glass_url_destination'] = glass_url_destination
+    db_dict['protocol_source'] = protocol_source
+    db_dict['protocol_destination'] = protocol_destination
+    db_dict['http_status'] = http_status
+    db_dict['is_redirect'] = is_redirect
+    db_dict['headers_count'] = headers_count
+    db_dict['headers_bytes'] = headers_bytes
+    db_dict['response_bytes'] = response_bytes
+
+    return db_dict
+
+
+
+
 def connect_to_scrape_database(name):
     '''
     return connection to named database
@@ -111,9 +154,9 @@ def select_one_glass(scrape_database, lgid):
     conn.close()
     return result
 
-def update_one_glass_detail(scrape_database, glass_record, detail, new_value):
+def update_one_glass_column(scrape_database, glass_record, column, new_value):
     conn = connect_to_scrape_database(scrape_database)
-    update = "UPDATE glasses SET %s = :new_value WHERE lgid = :id" % detail
+    update = "UPDATE glasses SET %s = :new_value WHERE lgid = :id" % column
     conn.execute(update, new_value=new_value, id=glass_record[0])  # magic number for lgid
     conn.close()
     return
